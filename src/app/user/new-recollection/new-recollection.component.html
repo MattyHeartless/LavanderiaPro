@@ -1,0 +1,286 @@
+<header class="sticky top-0 z-50 w-full border-b border-solid border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md px-6 lg:px-40 py-4">
+<div class="max-w-[1200px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">local_laundry_service</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight">Lavandería Pro</h2>
+</div>
+<div class="flex items-center gap-6">
+<button class="flex min-w-[84px] items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20" routerLink="/new-recollection">
+<span class="material-symbols-outlined text-xl">add</span>
+                Nueva recolección
+            </button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
+<button class="flex items-center gap-2 text-sm font-bold text-primary" routerLink="/profile">
+<span class="material-symbols-outlined text-xl">person</span>
+                Mi Cuenta
+            </button>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-6 lg:px-40 py-12">
+<div class="flex flex-col lg:flex-row gap-12">
+<div class="flex-grow">
+<div class="mb-10">
+<h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2">Programar Nueva Recolección</h1>
+<p class="text-slate-500">Completa los pasos para agendar tu servicio de lavandería profesional.</p>
+</div>
+<nav class="flex items-center gap-4 mb-10 overflow-x-auto pb-2 scrollbar-hide">
+<div class="flex items-center gap-2 shrink-0 border-b-2 border-primary pb-2 pr-4">
+<span class="w-6 h-6 rounded-full bg-primary text-white text-[10px] flex items-center justify-center font-bold">1</span>
+<span class="text-sm font-bold text-primary">Dirección</span>
+</div>
+<div class="flex items-center gap-2 shrink-0 border-b-2 border-transparent pb-2 pr-4 text-slate-400">
+<span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] flex items-center justify-center font-bold">2</span>
+<span class="text-sm font-medium">Servicios</span>
+</div>
+<div class="flex items-center gap-2 shrink-0 border-b-2 border-transparent pb-2 pr-4 text-slate-400">
+<span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] flex items-center justify-center font-bold">3</span>
+<span class="text-sm font-medium">Fecha</span>
+</div>
+<div class="flex items-center gap-2 shrink-0 border-b-2 border-transparent pb-2 pr-4 text-slate-400">
+<span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] flex items-center justify-center font-bold">4</span>
+<span class="text-sm font-medium">Pago</span>
+</div>
+</nav>
+<div class="space-y-12">
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">1. Seleccionar Dirección</h2>
+<button class="text-primary text-sm font-bold flex items-center gap-1 hover:underline" routerLink="/address">
+<span class="material-symbols-outlined text-lg">add</span>
+                            Nueva Dirección
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<label class="relative flex flex-col p-5 rounded-2xl border-2 border-primary bg-mint cursor-pointer transition-all">
+<input checked="" class="absolute top-4 right-4 text-primary focus:ring-primary h-5 w-5" name="address" type="radio"/>
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">home</span>
+<span class="font-bold text-slate-900">Casa</span>
+</div>
+<p class="text-sm text-slate-600">Av. Paseo de la Reforma 222, Juarez, CDMX</p>
+</label>
+<label class="relative flex flex-col p-5 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer hover:border-primary/50 transition-all">
+<input class="absolute top-4 right-4 text-primary focus:ring-primary h-5 w-5" name="address" type="radio"/>
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-slate-400">work</span>
+<span class="font-bold text-slate-900 dark:text-white">Oficina</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-400">Insurgentes Sur 1602, Crédito Constructor, CDMX</p>
+</label>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">2. Tipo de Servicio y Prendas</h2>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-mint rounded-xl flex items-center justify-center text-mint-dark">
+<span class="material-symbols-outlined">local_laundry_service</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Lavado y Secado por Kilo</h4>
+<p class="text-xs text-slate-400">$45.00 MXN / kg (Mín. 3kg)</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="text-sm font-bold min-w-[20px] text-center">4</span>
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-soft-blue rounded-xl flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined">iron</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Solo Planchado</h4>
+<p class="text-xs text-slate-400">$18.00 MXN / pieza</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="text-sm font-bold min-w-[20px] text-center">0</span>
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-500">
+<span class="material-symbols-outlined">dry_cleaning</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Tintorería</h4>
+<p class="text-xs text-slate-400">Desde $85.00 MXN / pieza</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="text-sm font-bold min-w-[20px] text-center">2</span>
+<button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">3. Fecha y Hora</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-bold text-slate-900 dark:text-white">Octubre 2023</h4>
+<div class="flex gap-2">
+<button class="p-1 hover:text-primary"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-1 hover:text-primary"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center text-[10px] font-bold text-slate-400 uppercase mb-4">
+<span>Dom</span><span>Lun</span><span>Mar</span><span>Mie</span><span>Jue</span><span>Vie</span><span>Sab</span>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center">
+<span class="py-2 text-slate-300">22</span>
+<span class="py-2 text-slate-300">23</span>
+<span class="py-2 font-bold text-slate-700 bg-primary/10 rounded-lg">24</span>
+<span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">25</span>
+<span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">26</span>
+<span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">27</span>
+<span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">28</span>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-sm font-bold text-slate-700 dark:text-slate-300">Horarios Disponibles</p>
+<div class="grid grid-cols-2 gap-2">
+<button class="py-3 text-sm font-medium rounded-xl border border-primary bg-mint text-primary">09:00 - 11:00 AM</button>
+<button class="py-3 text-sm font-medium rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary transition-colors">11:00 - 01:00 PM</button>
+<button class="py-3 text-sm font-medium rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary transition-colors">01:00 - 03:00 PM</button>
+<button class="py-3 text-sm font-medium rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary transition-colors">04:00 - 06:00 PM</button>
+</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">4. Método de Pago</h2>
+<div class="space-y-3">
+<label class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary" name="payment" type="radio"/>
+<span class="material-symbols-outlined text-slate-400">credit_card</span>
+<div class="flex-grow">
+<p class="text-sm font-bold">Visa terminada en 4421</p>
+<p class="text-xs text-slate-400">Expira 04/26</p>
+</div>
+</label>
+<label class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer">
+<input class="text-primary focus:ring-primary" name="payment" type="radio"/>
+<span class="material-symbols-outlined text-slate-400">payments</span>
+<div class="flex-grow">
+<p class="text-sm font-bold">Pago a domicilio</p>
+<p class="text-xs text-slate-400">Efectivo o terminal al recolectar</p>
+</div>
+</label>
+</div>
+</section>
+</div>
+</div>
+<aside class="w-full lg:w-80 shrink-0">
+<div class="sticky top-28 space-y-6">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-xl">
+<h3 class="text-lg font-black text-slate-900 dark:text-white mb-6">Resumen del pedido</h3>
+<div class="space-y-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-6">
+<div class="flex justify-between text-sm">
+<span class="text-slate-500">4kg Lavado y Secado</span>
+<span class="font-bold">$180.00</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-slate-500">2 piezas Tintorería</span>
+<span class="font-bold">$170.00</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-slate-500">Servicio a domicilio</span>
+<span class="text-primary font-bold">GRATIS</span>
+</div>
+</div>
+<div class="space-y-4 mb-8">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Recolección</p>
+<p class="text-xs font-medium text-slate-700 dark:text-slate-300">Mañana, 24 Oct • 09:00 - 11:00 AM</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Dirección</p>
+<p class="text-xs font-medium text-slate-700 dark:text-slate-300">Casa - Paseo de la Reforma 222</p>
+</div>
+</div>
+<div class="flex justify-between items-center mb-8">
+<span class="text-lg font-bold">Total estimado</span>
+<span class="text-2xl font-black text-primary">$350.00</span>
+</div>
+<button class="w-full bg-primary text-white h-14 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2" routerLink="/recollection-received">
+                        Confirmar Pedido
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<p class="text-[10px] text-center text-slate-400 mt-4">Al confirmar, aceptas nuestros términos y condiciones de servicio.</p>
+</div>
+<div class="bg-blue-50 dark:bg-slate-800/50 rounded-2xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-blue-500">info</span>
+<p class="text-xs text-blue-700 dark:text-blue-300">
+                        El peso final se confirmará al momento de la recolección con nuestra báscula certificada.
+                    </p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<footer class="bg-slate-900 text-white mt-12 py-12 px-6 lg:px-40 border-t border-slate-800">
+<div class="max-w-[1200px] mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-3xl text-primary">local_laundry_service</span>
+<h2 class="text-xl font-black uppercase tracking-tight">Lavandería Pro</h2>
+</div>
+<p class="text-slate-400 text-sm leading-relaxed">Cuidado experto y puntualidad garantizada. Servicio premium a domicilio en toda la ciudad.</p>
+</div>
+<div>
+<h4 class="font-bold mb-6 text-lg">Mi Cuenta</h4>
+<ul class="flex flex-col gap-4 text-slate-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="#">Mis Direcciones</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Mis Pedidos</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Métodos de Pago</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-6 text-lg">Contacto</h4>
+<ul class="flex flex-col gap-4 text-slate-400 text-sm">
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">call</span> +1 (555) 123-4567</li>
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">mail</span> holalavanderiapro.com</li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-6 text-lg">Ayuda</h4>
+<button class="w-full bg-slate-800 border border-slate-700 py-3 rounded-xl text-sm font-bold hover:bg-slate-700 transition-colors">Centro de Soporte</button>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-800 text-slate-500 text-xs flex flex-col md:flex-row justify-between items-center gap-4">
+<p>© 2024 Lavandería Pro. Todos los derechos reservados.</p>
+<div class="flex gap-8">
+<a class="hover:text-white" href="#">Privacidad</a>
+<a class="hover:text-white" href="#">Términos</a>
+</div>
+</div>
+</div>
+</footer>

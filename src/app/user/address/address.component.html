@@ -1,0 +1,190 @@
+<header class="sticky top-0 z-50 w-full border-b border-solid border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md px-6 lg:px-40 py-4">
+<div class="max-w-[1200px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">local_laundry_service</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight">Lavandería Pro</h2>
+</div>
+<div class="flex items-center gap-6">
+<button class="flex min-w-[84px] items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20" routerLink="/new-recollection">
+<span class="material-symbols-outlined text-xl">add</span>
+                Nueva recolección
+            </button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
+<button class="flex items-center gap-2 text-sm font-bold text-primary" routerLink="/profile">
+<span class="material-symbols-outlined text-xl">person</span>
+                Mi Cuenta
+            </button>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-6 lg:px-40 py-12">
+<div class="flex flex-col md:flex-row gap-10">
+<aside class="w-full md:w-64 flex-shrink-0">
+<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
+<nav class="flex flex-col">
+<a class="flex items-center gap-3 px-6 py-4 font-bold transition-colors" href="" routerLink="/profile">
+<span class="material-symbols-outlined">person</span>
+                        Perfil
+                    </a>
+<a class="sidebar-link-active flex items-center gap-3 px-6 py-4 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold transition-colors" href="" routerLink="/address">
+<span class="material-symbols-outlined">location_on</span>
+                        Direcciones
+                    </a>
+<a class="flex items-center gap-3 px-6 py-4 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold transition-colors" href="" routerLink="/payment-methods">
+<span class="material-symbols-outlined">payments</span>
+                        Métodos de Pago
+                    </a>
+<a class="flex items-center gap-3 px-6 py-4 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold transition-colors" href="" routerLink="/recollection-orders">
+<span class="material-symbols-outlined">history</span>
+                        Historial de Pedidos
+                    </a>
+<div class="border-t border-slate-100 dark:border-slate-800 my-2"></div>
+<a class="flex items-center gap-3 px-6 py-4 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 font-bold transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+                        Cerrar Sesión
+                    </a>
+</nav>
+</div>
+</aside>
+<section class="flex-grow">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+<div>
+<h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2">Mis Direcciones</h1>
+<p class="text-slate-500 text-sm">Gestiona los lugares donde recolectamos y entregamos tu ropa.</p>
+</div>
+<button class="inline-flex items-center justify-center gap-2 rounded-xl h-12 px-6 bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined">add</span>
+                        Nueva dirección
+                    </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:border-primary/30 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-soft-blue text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">home</span>
+</div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Casa</h3>
+</div>
+<span class="bg-mint text-mint-dark text-[10px] font-black px-3 py-1 rounded-full uppercase">Principal</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                            Av. Paseo de la Reforma 222, Int. 5B<br/>
+                            Col. Juárez, Alc. Cuauhtémoc<br/>
+                            CDMX, CP 06600
+                        </p>
+<div class="flex items-center gap-4 pt-4 border-t border-slate-50 dark:border-slate-800">
+<button class="flex items-center gap-1.5 text-sm font-bold text-slate-600 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+                                Editar
+                            </button>
+<button class="flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+                                Eliminar
+                            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:border-primary/30 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-mint text-mint-dark flex items-center justify-center">
+<span class="material-symbols-outlined">work</span>
+</div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Oficina</h3>
+</div>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                            Torre BBVA, Piso 12<br/>
+                            Av. Paseo de la Reforma 506<br/>
+                            Col. Juárez, CP 06600
+                        </p>
+<div class="flex items-center gap-4 pt-4 border-t border-slate-50 dark:border-slate-800">
+<button class="flex items-center gap-1.5 text-sm font-bold text-slate-600 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+                                Editar
+                            </button>
+<button class="flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+                                Eliminar
+                            </button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm hover:border-primary/30 transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center">
+<span class="material-symbols-outlined">location_city</span>
+</div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Gimnasio</h3>
+</div>
+</div>
+<p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                            Calle Versalles 45, Planta Baja<br/>
+                            Col. Juárez, Alc. Cuauhtémoc<br/>
+                            CDMX, CP 06600
+                        </p>
+<div class="flex items-center gap-4 pt-4 border-t border-slate-50 dark:border-slate-800">
+<button class="flex items-center gap-1.5 text-sm font-bold text-slate-600 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+                                Editar
+                            </button>
+<button class="flex items-center gap-1.5 text-sm font-bold text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+                                Eliminar
+                            </button>
+</div>
+</div>
+<div class="border-2 border-dashed border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-4 opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined text-2xl">add_location_alt</span>
+</div>
+<p class="text-sm font-bold text-slate-500">Añadir dirección adicional</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="bg-slate-900 text-white mt-12 py-12 px-6 lg:px-40 border-t border-slate-800">
+<div class="max-w-[1200px] mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-3xl text-primary">local_laundry_service</span>
+<h2 class="text-xl font-black uppercase tracking-tight">Lavandería Pro</h2>
+</div>
+<p class="text-slate-400 text-sm leading-relaxed">Cuidado experto y puntualidad garantizada. Servicio premium a domicilio en toda la ciudad.</p>
+</div>
+<div>
+<h4 class="font-bold mb-6 text-lg">Mi Cuenta</h4>
+<ul class="flex flex-col gap-4 text-slate-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="" >Mis Direcciones</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Mis Pedidos</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Favoritos</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Configuración</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-6 text-lg">Contacto</h4>
+<ul class="flex flex-col gap-4 text-slate-400 text-sm">
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">call</span> +1 (555) 123-4567</li>
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">mail</span> holalavanderiapro.com</li>
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">location_on</span> Ciudad de México, México</li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-6 text-lg">Ayuda</h4>
+<p class="text-slate-400 text-sm mb-6">¿Tienes dudas sobre tu servicio?</p>
+<button class="w-full bg-slate-800 border border-slate-700 py-3 rounded-xl text-sm font-bold hover:bg-slate-700 transition-colors">Centro de Soporte</button>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-800 text-slate-500 text-xs flex flex-col md:flex-row justify-between items-center gap-4">
+<p>© 2024 Lavandería Pro. Todos los derechos reservados.</p>
+<div class="flex gap-8">
+<a class="hover:text-white" href="#">Política de Privacidad</a>
+<a class="hover:text-white" href="#">Términos de Servicio</a>
+</div>
+</div>
+</div>
+</footer>
