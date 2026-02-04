@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService, LoginRequest } from '../services/auth.service';
+import { AuthService, LoginRequest, LoginResponse } from '../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -29,7 +29,9 @@ model: LoginRequest = {
       this.errorMessage = '';
 
       this.authService.login(this.model).subscribe({
-        next: () => {
+        next: (response: LoginResponse) => {
+          this.authService.currentUserSubject.next(response);
+          localStorage.setItem('user_session', JSON.stringify(response));
           this.router.navigate(['/profile']);
         },
         error: (error) => {
