@@ -16,6 +16,17 @@ export interface Addresses {
     
 }
 
+export interface PaymentMethod {
+    id?: 0 | string;
+    cardHolderName: string;
+    cardNumber: string;
+    expirationDate: string;
+    cvv: string;
+    userId: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -46,6 +57,31 @@ export class ProfileService {
 
     deleteAddress(addressId: string, userId: string) {
         return this.http.delete(`${this.profileUrl}/addresses/${addressId}/${userId}`)
+    }
+
+
+    private paymentMethodsSubject = new BehaviorSubject<PaymentMethod[]>([]);
+
+    public paymentMethods$ = this.paymentMethodsSubject.asObservable();
+
+    getPaymentMethods(userId: string) {
+        return this.http.get<PaymentMethod[]>(`${this.profileUrl}/payment-methods/${userId}`).pipe(
+            tap((paymentMethods) => {
+                this.paymentMethodsSubject.next(paymentMethods);
+            })
+        );
+    }
+
+    savePaymentMethod(data: PaymentMethod) {
+        return this.http.post<{ message: string }>(`${this.profileUrl}/payment-methods`, data)
+    }
+
+    updatePaymentMethod(data: PaymentMethod) {
+        return this.http.put<PaymentMethod>(`${this.profileUrl}/payment-methods/${data.id}`, data)
+    }
+
+    deletePaymentMethod(paymentMethodId: string, userId: string) {
+        return this.http.delete(`${this.profileUrl}/payment-methods/${paymentMethodId}/${userId}`)
     }
 
 }
