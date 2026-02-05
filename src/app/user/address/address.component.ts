@@ -26,7 +26,9 @@ export class AddressComponent {
   addresses : Addresses[] = [];
   isEditing: boolean = false;
   addressToEdit: Addresses | null = null;
-
+  showDeleteModal: boolean = false;
+addressToDelete: any = null;
+selectedAddress: any = null;
  constructor(private profileService: ProfileService) {
 
   }
@@ -120,4 +122,29 @@ export class AddressComponent {
   };
   this.showaddressform = false;
   }
+
+  openDeleteModal(address: any) {
+  this.selectedAddress = address;
+  this.showDeleteModal = true;
+  }
+
+  confirmDelete(addressToDelete: any) {
+    console.log('Confirmando eliminación de:', addressToDelete);
+  
+    // Aquí usas this.selectedAddress.id para tu servicio de eliminación
+    console.log('Eliminando:', addressToDelete.name);
+    
+    // Tu lógica de servicio aquí...
+    this.profileService.deleteAddress(addressToDelete.id,this.user_session.id).subscribe({
+      next: () => {
+        this.loadAddresses(); 
+        this.showDeleteModal = false;
+        this.selectedAddress = null; 
+      },
+      error: (err) => {
+        console.error('Error al eliminar dirección:', err);
+      }
+    });
+  
+}
 }

@@ -44,13 +44,8 @@ export class ProfileService {
         return this.http.put<Addresses>(`${this.profileUrl}/addresses/${data.id}`, data)
     }
 
-    deleteAddress(addressId: string) {
-        return this.http.delete(`${this.profileUrl}/addresses/${addressId}`).pipe(
-            tap(() => {
-                const currentAddresses = this.addressesSubject.value.filter(addr => addr.id !== addressId);
-                this.addressesSubject.next(currentAddresses);
-            })
-        );
+    deleteAddress(addressId: string, userId: string) {
+        return this.http.delete(`${this.profileUrl}/addresses/${addressId}/${userId}`)
     }
 
 }
