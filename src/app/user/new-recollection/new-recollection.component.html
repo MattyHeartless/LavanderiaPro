@@ -1,18 +1,27 @@
-<header class="sticky top-0 z-50 w-full border-b border-solid border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md px-6 lg:px-40 py-4">
-  <div class="max-w-[1200px] mx-auto flex items-center justify-between">
-    <div class="flex items-center gap-3">
+<header class="sticky top-0 z-50 w-full border-b border-solid border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md px-4 md:px-6 lg:px-40 py-3 md:py-4">
+  <div class="max-w-[1200px] mx-auto flex items-center justify-between gap-2">
+    
+    <div class="flex items-center gap-2 md:gap-3 shrink-0">
       <div class="text-primary">
-        <span class="material-symbols-outlined text-3xl">local_laundry_service</span>
+        <span class="material-symbols-outlined text-2xl md:text-3xl">local_laundry_service</span>
       </div>
-      <h2 class="text-xl font-bold leading-tight tracking-tight">Lavandería Pro</h2>
+      <h2 class="text-lg md:text-xl font-bold leading-tight tracking-tight whitespace-nowrap">Lavandería Pro</h2>
     </div>
-    <div class="flex items-center gap-6">
-      <button class="flex min-w-[84px] items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20" routerLink="/new-recollection">
-        <span class="material-symbols-outlined text-xl">add</span> Nueva recolección </button>
-      <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
-      <button class="flex items-center gap-2 text-sm font-bold text-primary" routerLink="/profile">
-        <span class="material-symbols-outlined text-xl">person</span> Mi Cuenta </button>
+
+    <div class="flex items-center gap-3 md:gap-6">
+      <button class="flex items-center justify-center rounded-lg h-10 px-3 md:px-5 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95" routerLink="/new-recollection">
+        <span class="material-symbols-outlined text-xl">add</span> 
+        <span class="hidden sm:inline ml-1">Nueva recolección</span>
+      </button>
+
+      <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 hidden xs:block"></div>
+
+      <button class="flex items-center gap-1 md:gap-2 text-sm font-bold text-primary whitespace-nowrap" routerLink="/profile">
+        <span class="material-symbols-outlined text-2xl">account_circle</span>
+        <span class="hidden md:inline">Mi Cuenta</span>
+      </button>
     </div>
+
   </div>
 </header>
 <main class="max-w-[1200px] mx-auto px-6 lg:px-40 py-12">
@@ -48,16 +57,31 @@
               <span class="material-symbols-outlined text-lg">add</span> Nueva Dirección </button>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label *ngFor="let address of UserAddresses" class="relative flex flex-col p-5 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer hover:border-primary/50 transition-all">
-              <input checked="" class="absolute top-4 right-4 text-primary focus:ring-primary h-5 w-5" name="address" type="radio" />
-              <div class="flex items-center gap-3 mb-2" [ngSwitch]="address.title">
-                   <span class="material-symbols-outlined text-primary" *ngSwitchCase="'Casa'">home</span>
-                <span class="material-symbols-outlined text-primary" *ngSwitchCase="'Oficina'">work</span>
-                <span class="material-symbols-outlined text-primary" *ngSwitchDefault>Exercise</span>
-                <span class="font-bold text-slate-900">{{address.title}}</span>
-              </div>
-              <p class="text-sm text-slate-600">{{address.street}} {{address.neighbourhood}} {{address.city}} {{address.state}} {{address.zipCode}}</p>
-            </label>
+         <label *ngFor="let address of UserAddresses" 
+  class="bg-white dark:bg-slate-900 relative flex flex-col p-5 rounded-2xl border-2 transition-all cursor-pointer"
+  [class.border-primary]="selectedAddress.fullAddress === (address.street + ' ' + address.neighbourhood)"
+  [class.border-slate-100]="selectedAddress.fullAddress !== (address.street + ' ' + address.neighbourhood)"
+  [class.dark:border-slate-800]="selectedAddress.fullAddress !== (address.street + ' ' + address.neighbourhood)">
+  
+  <input 
+    type="radio" 
+    name="address"
+    [value]="address"
+    [checked]="selectedAddress.title === address.title"
+    (change)="onAddressChange(address)"
+    class="absolute top-4 right-4 text-primary focus:ring-primary h-5 w-5" />
+
+  <div class="flex items-center gap-3 mb-2" [ngSwitch]="address.title">
+    <span class="material-symbols-outlined text-primary" *ngSwitchCase="'Casa'">home</span>
+    <span class="material-symbols-outlined text-primary" *ngSwitchCase="'Oficina'">work</span>
+    <span class="material-symbols-outlined text-primary" *ngSwitchDefault>location_on</span>
+    <span class="font-bold text-slate-900 dark:text-white">{{address.title}}</span>
+  </div>
+
+  <p class="text-sm text-slate-600 dark:text-slate-400">
+    {{address.street}}, {{address.neighbourhood}}, {{address.city}}
+  </p>
+</label>
             <!-- <label class="relative flex flex-col p-5 rounded-2xl border-2 border-primary bg-mint cursor-pointer transition-all">
               <input class="absolute top-4 right-4 text-primary focus:ring-primary h-5 w-5" name="address" type="radio" />
               <div class="flex items-center gap-3 mb-2">
@@ -73,177 +97,241 @@
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">2. Tipo de Servicio y Prendas</h2>
           </div>
           <div class="space-y-4">
-            <div class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+            <div *ngFor="let service of Services" class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-mint rounded-xl flex items-center justify-center text-mint-dark">
-                  <span class="material-symbols-outlined">local_laundry_service</span>
+                <div class="{{ service.themeIcon }}">
+                  <span class="material-symbols-outlined">{{ service.icon }}</span>
                 </div>
                 <div>
-                  <h4 class="font-bold text-slate-900 dark:text-white">Lavado y Secado por Kilo</h4>
-                  <p class="text-xs text-slate-400">$45.00 MXN / kg (Mín. 3kg)</p>
+                  <h4 class="font-bold text-slate-900 dark:text-white">{{ service.name }}</h4>
+                    <p class="text-xs text-slate-400">{{service.description}}</p>
+                  <p class="text-xs text-slate-400">${{ service.price }} MXN / {{ service.uoM }}</p>
                 </div>
               </div>
               <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
-                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                <button (click)="updateQuantity(service, -1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
                   <span class="material-symbols-outlined">remove</span>
                 </button>
-                <span class="text-sm font-bold min-w-[20px] text-center">4</span>
-                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                <span class="text-sm font-bold min-w-[20px] text-center">{{ service.quantity || 0 }}</span>
+                <button (click)="updateQuantity(service, 1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
                   <span class="material-symbols-outlined">add</span>
                 </button>
               </div>
             </div>
-            <div class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-soft-blue rounded-xl flex items-center justify-center text-blue-500">
-                  <span class="material-symbols-outlined">iron</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-slate-900 dark:text-white">Solo Planchado</h4>
-                  <p class="text-xs text-slate-400">$18.00 MXN / pieza</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
-                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined">remove</span>
-                </button>
-                <span class="text-sm font-bold min-w-[20px] text-center">0</span>
-                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined">add</span>
-                </button>
-              </div>
-            </div>
-            <div class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-500">
-                  <span class="material-symbols-outlined">dry_cleaning</span>
-                </div>
-                <div>
-                  <h4 class="font-bold text-slate-900 dark:text-white">Tintorería</h4>
-                  <p class="text-xs text-slate-400">Desde $85.00 MXN / pieza</p>
-                </div>
-              </div>
-              <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
-                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined">remove</span>
-                </button>
-                <span class="text-sm font-bold min-w-[20px] text-center">2</span>
-                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined">add</span>
-                </button>
-              </div>
-            </div>
+            
           </div>
         </section>
         <section>
           <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">3. Fecha y Hora</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
-              <div class="flex items-center justify-between mb-6">
-                <h4 class="font-bold text-slate-900 dark:text-white">Octubre 2023</h4>
-                <div class="flex gap-2">
-                  <button class="p-1 hover:text-primary">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                  </button>
-                  <button class="p-1 hover:text-primary">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                  </button>
-                </div>
-              </div>
-              <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-bold text-slate-400 uppercase mb-4">
-                <span>Dom</span>
-                <span>Lun</span>
-                <span>Mar</span>
-                <span>Mie</span>
-                <span>Jue</span>
-                <span>Vie</span>
-                <span>Sab</span>
-              </div>
-              <div class="grid grid-cols-7 gap-2 text-center">
-                <span class="py-2 text-slate-300">22</span>
-                <span class="py-2 text-slate-300">23</span>
-                <span class="py-2 font-bold text-slate-700 bg-primary/10 rounded-lg">24</span>
-                <span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">25</span>
-                <span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">26</span>
-                <span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">27</span>
-                <span class="py-2 hover:bg-slate-50 rounded-lg cursor-pointer">28</span>
-              </div>
-            </div>
-            <div class="space-y-4">
-              <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Horarios Disponibles</p>
-              <div class="grid grid-cols-2 gap-2">
-                <button class="py-3 text-sm font-medium rounded-xl border border-primary bg-mint text-primary">09:00 - 11:00 AM</button>
-                <button class="py-3 text-sm font-medium rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary transition-colors">11:00 - 01:00 PM</button>
-                <button class="py-3 text-sm font-medium rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary transition-colors">01:00 - 03:00 PM</button>
-                <button class="py-3 text-sm font-medium rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary transition-colors">04:00 - 06:00 PM</button>
+  
+  <div class="flex items-center justify-between mb-6">
+    <h4 class="font-bold text-slate-900 dark:text-white capitalize">
+      {{ calendar.currentDate | date:'MMMM yyyy' }}
+    </h4>
+    <div class="flex gap-2">
+      <button (click)="calendar.changeWeek(-7)" class="p-1 hover:text-primary">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <button (click)="calendar.changeWeek(7)" class="p-1 hover:text-primary">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-bold text-slate-400 uppercase mb-4">
+    <span>Dom</span><span>Lun</span><span>Mar</span><span>Mie</span><span>Jue</span><span>Vie</span><span>Sab</span>
+  </div>
+
+  <div class="grid grid-cols-7 gap-2 text-center">
+    <span *ngFor="let day of calendar.weekDays" 
+      (click)="calendar.selectDay(day)"
+      [ngClass]="{
+        'font-bold text-slate-700 bg-primary/10': calendar.isSameDay(day, calendar.selectedDate),
+        'text-slate-900 dark:text-slate-100 hover:bg-slate-50 cursor-pointer': !calendar.isSameDay(day, calendar.selectedDate) && !calendar.isPastDay(day),
+        'text-slate-300': day.getMonth() !== calendar.currentDate.getMonth() && !calendar.isPastDay(day),
+        'opacity-30 cursor-not-allowed pointer-events-none': calendar.isPastDay(day)
+      }"
+      class="py-2 rounded-lg transition-all">
+  {{ day | date:'d' }}
+</span>
+  </div>
+</div>
+                      <div class="space-y-4">
+              <p class="text-sm font-bold text-slate-700 dark:text-slate-300">
+                Horarios Disponibles
+              </p>
+              
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <button 
+                  *ngFor="let hour of availableHours"
+                  (click)="selectTime(hour)"
+                  [ngClass]="{
+                    'border-primary bg-mint text-primary': selectedTime === hour,
+                    'border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-primary': selectedTime !== hour
+                  }"
+                  class="py-3 text-sm font-medium rounded-xl border transition-all duration-200">
+                  
+                  {{ hour }} {{ +hour.split(':')[0] >= 12 ? 'PM' : 'AM' }}
+                </button>
               </div>
             </div>
           </div>
         </section>
         <section>
           <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">4. Método de Pago</h2>
-          <div class="space-y-3">
-            <label class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer">
-              <input checked="" class="text-primary focus:ring-primary" name="payment" type="radio" />
-              <span class="material-symbols-outlined text-slate-400">credit_card</span>
-              <div class="flex-grow">
-                <p class="text-sm font-bold">Visa terminada en 4421</p>
-                <p class="text-xs text-slate-400">Expira 04/26</p>
-              </div>
-            </label>
-            <label class="flex items-center gap-4 p-4 rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 cursor-pointer">
-              <input class="text-primary focus:ring-primary" name="payment" type="radio" />
-              <span class="material-symbols-outlined text-slate-400">payments</span>
-              <div class="flex-grow">
-                <p class="text-sm font-bold">Pago a domicilio</p>
-                <p class="text-xs text-slate-400">Efectivo o terminal al recolectar</p>
-              </div>
-            </label>
-          </div>
+        <div class="space-y-3">
+  <label *ngFor="let paymentMethod of UserPaymentMethods" 
+         class="flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer"
+         [class.border-primary]="selectedPayment.details.includes(paymentMethod.cardNumber.slice(-4))"
+         [ngClass]="{ 'bg-primary/5': selectedPayment.details.includes(paymentMethod.cardNumber.slice(-4)) }">
+    
+    <input (change)="onPaymentChange('card', paymentMethod)" 
+           class="text-primary focus:ring-primary h-5 w-5" name="payment" type="radio" />
+    
+    <span class="material-symbols-outlined text-slate-400">credit_card</span>
+    <div class="flex-grow">
+      <p class="text-sm font-bold">{{ isItVisaOrMasterCard(paymentMethod) }} terminada en {{ paymentMethod.cardNumber | slice:-4 }}</p>
+      <p class="text-xs text-slate-400">Expira {{ paymentMethod.expirationDate }}</p>
+    </div>
+  </label>
+
+  <label class="flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer"
+         [class.border-primary]="selectedPayment.label === 'Pago a domicilio'"
+         [ngClass]="{ 'bg-primary/5': selectedPayment.label === 'Pago a domicilio' }">
+    
+    <input (change)="onPaymentChange('cash')" 
+           class="text-primary focus:ring-primary h-5 w-5" name="payment" type="radio" />
+    
+    <span class="material-symbols-outlined text-slate-400">payments</span>
+    <div class="flex-grow">
+      <p class="text-sm font-bold">Pago a domicilio</p>
+      <p class="text-xs text-slate-400">Efectivo o terminal al recolectar</p>
+    </div>
+  </label>
+</div>
         </section>
       </div>
     </div>
     <aside class="w-full lg:w-80 shrink-0">
-      <div class="sticky top-28 space-y-6">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-xl">
-          <h3 class="text-lg font-black text-slate-900 dark:text-white mb-6">Resumen del pedido</h3>
-          <div class="space-y-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-6">
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-500">4kg Lavado y Secado</span>
-              <span class="font-bold">$180.00</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-500">2 piezas Tintorería</span>
-              <span class="font-bold">$170.00</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-slate-500">Servicio a domicilio</span>
-              <span class="text-primary font-bold">GRATIS</span>
-            </div>
+     <div class="sticky top-28 space-y-6">
+  <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 shadow-xl">
+    <h3 class="text-lg font-black text-slate-900 dark:text-white mb-6">Resumen del pedido</h3>
+    
+    <div class="space-y-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-6">
+      
+      @for (item of cart; track item.id) {
+        @if (item.quantity > 0) {
+          <div class="flex justify-between text-sm transition-all animate-in fade-in">
+            <span class="text-slate-500">
+              {{ item.quantity }} {{ item.unit.toLowerCase() }} {{ item.name }}
+            </span>
+            <span class="font-bold text-slate-900 dark:text-slate-100">
+              ${{ (item.price * item.quantity).toFixed(2) }}
+            </span>
           </div>
-          <div class="space-y-4 mb-8">
-            <div>
-              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Recolección</p>
-              <p class="text-xs font-medium text-slate-700 dark:text-slate-300">Mañana, 24 Oct • 09:00 - 11:00 AM</p>
-            </div>
-            <div>
-              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Dirección</p>
-              <p class="text-xs font-medium text-slate-700 dark:text-slate-300">Casa - Paseo de la Reforma 222</p>
-            </div>
-          </div>
-          <div class="flex justify-between items-center mb-8">
-            <span class="text-lg font-bold">Total estimado</span>
-            <span class="text-2xl font-black text-primary">$350.00</span>
-          </div>
-          <button class="w-full bg-primary text-white h-14 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2" routerLink="/recollection-received"> Confirmar Pedido <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
-          <p class="text-[10px] text-center text-slate-400 mt-4">Al confirmar, aceptas nuestros términos y condiciones de servicio.</p>
-        </div>
-        <div class="bg-blue-50 dark:bg-slate-800/50 rounded-2xl p-4 flex items-start gap-3">
-          <span class="material-symbols-outlined text-blue-500">info</span>
-          <p class="text-xs text-blue-700 dark:text-blue-300"> El peso final se confirmará al momento de la recolección con nuestra báscula certificada. </p>
-        </div>
+        }
+      }
+
+      @if (totalEstimated === 0) {
+        <p class="text-xs text-slate-400 italic text-center py-2">No has seleccionado servicios aún</p>
+      }
+
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Servicio a domicilio</span>
+        <span class="text-primary font-bold">{{ deliveryFee === 0 ? 'GRATIS' : '$' + deliveryFee }}</span>
       </div>
+    </div>
+
+    <div class="space-y-4 mb-8">
+  <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/select-schedule">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Recolección</p>
+        <p class="text-xs font-medium text-slate-700 dark:text-slate-300">
+          {{ selectedPickup.date }} • {{ selectedPickup.timeSlot }}
+        </p>
+      </div>
+      <span class="material-symbols-outlined text-slate-300 text-sm">edit</span>
+    </div>
+  </div>
+
+  <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/select-address">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Dirección de entrega</p>
+        @if (selectedAddress.fullAddress) {
+          <p class="text-xs font-medium text-slate-700 dark:text-slate-300 text-pretty leading-snug">
+            <span class="font-bold text-primary">{{ selectedAddress.title }}</span> - {{ selectedAddress.fullAddress }}
+          </p>
+        } @else {
+          <p class="text-xs font-medium text-red-400 italic">No has seleccionado dirección</p>
+        }
+      </div>
+      <span class="material-symbols-outlined text-slate-300 text-sm">edit</span>
+    </div>
+  </div>
+   <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/select-payment">
+  <div class="flex justify-between items-start">
+    <div class="flex-1 min-w-0"> <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Método de pago</p>
+      
+      @if (selectedPayment.label !== 'No seleccionado') {
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary text-lg">
+            {{ selectedPayment.icon }}
+          </span>
+          <p class="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">
+            <span class="font-bold text-primary">{{ selectedPayment.label }}</span> 
+            <span class="ml-1 text-slate-500">{{ selectedPayment.details }}</span>
+          </p>
+        </div>
+      } @else {
+        <p class="text-xs font-medium text-red-400 italic">No has seleccionado pago</p>
+      }
+    </div>
+    
+    <span class="material-symbols-outlined text-slate-300 text-sm ml-2">edit</span>
+  </div>
+</div>
+    
+</div>
+
+    <div class="flex justify-between items-center mb-8">
+      <span class="text-lg font-bold">Total estimado</span>
+      <span class="text-2xl font-black text-primary transition-all">
+        ${{ totalEstimated.toFixed(2) }}
+      </span>
+    </div>
+
+   <button 
+  [disabled]="!isOrderValid"
+  [class.opacity-50]="!isOrderValid"
+  [class.cursor-not-allowed]="!isOrderValid"
+  [class.grayscale]="!isOrderValid"
+  class="w-full bg-primary text-white h-14 rounded-xl font-bold shadow-lg shadow-primary/20 hover:enabled:scale-[1.02] active:enabled:scale-[0.98] transition-all flex items-center justify-center gap-2" 
+  routerLink="/recollection-received">
+  
+  <span>Confirmar Pedido</span>
+  <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+
+@if (!isOrderValid && totalEstimated > 0) {
+  <p class="text-[10px] text-center text-red-400 mt-2 animate-pulse">
+    Por favor, completa la dirección, fecha y método de pago.
+  </p>
+}
+
+    <p class="text-[10px] text-center text-slate-400 mt-4">Al confirmar, aceptas nuestros términos y condiciones de servicio.</p>
+  </div>
+
+  <div class="bg-blue-50 dark:bg-slate-800/50 rounded-2xl p-4 flex items-start gap-3">
+    <span class="material-symbols-outlined text-blue-500">info</span>
+    <p class="text-xs text-blue-700 dark:text-blue-300">
+      El peso final se confirmará al momento de la recolección con nuestra báscula certificada.
+    </p>
+  </div>
+</div>
     </aside>
   </div>
 </main>

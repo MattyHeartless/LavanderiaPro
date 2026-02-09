@@ -9,7 +9,28 @@ export interface Service {
     description: string;
     price: number;
     uoM: string;
+    icon: string;
+    themeIcon: string;
     isActive?: boolean;
+    quantity?: number;
+}
+
+export interface ServiceItem {
+  id: number;
+  name: string;
+  price: number;
+  unit: string;
+  quantity: number;
+}
+
+export interface PickupSchedule {
+  date: string;
+  timeSlot: string;
+}
+
+export interface UserAddress {
+  title: string;
+  fullAddress: string;
 }
 
 @Injectable({
