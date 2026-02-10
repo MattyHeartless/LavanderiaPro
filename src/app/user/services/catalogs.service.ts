@@ -16,15 +16,17 @@ export interface Service {
 }
 
 export interface ServiceItem {
-  id: number;
-  name: string;
-  price: number;
+ 
+  serviceId: string;
+  serviceName: string;
+  servicePrice: number;
   unit: string;
   quantity: number;
 }
 
 export interface PickupSchedule {
-  date: string;
+    date:string;
+  datelabel: string;
   timeSlot: string;
 }
 

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Addresses, PaymentMethod, ProfileService } from '../services/profile.service';
 import { CatalogsService, PickupSchedule, Service, ServiceItem, UserAddress } from '../services/catalogs.service';
 import { CommonModule } from '@angular/common';
 import { CalendarComponent } from '../utils/calendar';
+import { Order, OrdersService } from '../services/orders.service';
 
 @Component({
   selector: 'app-new-recollection',
@@ -25,13 +26,17 @@ availableHours: string[] = [
 ];
 deliveryFee = 25;
 cart: ServiceItem[] = [];
-selectedPickup: PickupSchedule = { date: '', timeSlot: '' };
+selectedPickup: PickupSchedule = { date: '', datelabel: '', timeSlot: '' };
 selectedAddress: UserAddress = {title: '',fullAddress: ''};
-selectedPayment = {label: 'No seleccionado', icon: 'payments', details: ''};
+selectedPayment = {id: 0,label: 'No seleccionado', icon: 'payments', details: ''};
+ 
+  
 
     constructor(
   private profileService: ProfileService,
   private catalogService: CatalogsService,
+  private ordersService: OrdersService,
+   private router: Router
     ) {}
 
     ngOnInit() {
@@ -39,7 +44,7 @@ selectedPayment = {label: 'No seleccionado', icon: 'payments', details: ''};
     this.getAddresses();
     this.getPaymentMethods();
     this.getServices();
-  }
+    this.calendar.setDayLabel();  }
 
   loadUserData() {
     const data = localStorage.getItem('user_session');
@@ -130,7 +135,7 @@ selectedPayment = {label: 'No seleccionado', icon: 'payments', details: ''};
 
     // 1. Creamos una copia del carrito actual para asegurar reactividad
     let newCart = [...this.cart];
-    const index = newCart.findIndex(item => item.name === service.name);
+    const index = newCart.findIndex(item => item.serviceName === service.name);
 
     if (newValue > 0) {
       if (index > -1) {
@@ -139,11 +144,12 @@ selectedPayment = {label: 'No seleccionado', icon: 'payments', details: ''};
       } else {
         // Agregamos el nuevo objeto a la copia
         newCart.push({
-          id: service.id || Date.now(),
-          name: service.name,
-          price: service.price,
+        
+          serviceName: service.name,
+          servicePrice: service.price,
           unit: service.uoM,
-          quantity: newValue
+          quantity: newValue,
+          serviceId: service.id || Date.now()
         });
       }
     } else {
@@ -155,7 +161,7 @@ selectedPayment = {label: 'No seleccionado', icon: 'payments', details: ''};
 
     // 2. Reasignamos el carrito (esto dispara la detección de cambios de Angular)
     this.cart = newCart;
-
+    console.log('Carrito actualizado:', this.cart);
     // 3. Recalculamos el envío (si baja a 0 servicios, el envío también debe ajustarse)
     
   }
@@ -165,7 +171,7 @@ selectedPayment = {label: 'No seleccionado', icon: 'payments', details: ''};
 
 // Getter para calcular el total dinámicamente
 get totalEstimated(): number {
-  const subtotal = this.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+  const subtotal = this.cart.reduce((total, item) => total + (item.servicePrice * item.quantity), 0);
   return subtotal + this.deliveryFee;
 }
 
@@ -184,20 +190,23 @@ get totalEstimated(): number {
   // 4. Actualizamos el objeto que el resumen está observando
   
   this.selectedPickup = {
-    date: this.calendar.selectedDayLabel,
+    date: this.calendar.selectedDate.toISOString().split('T')[0],
+    datelabel:this.calendar.selectedDayLabel,
     timeSlot: formattedTime
   };
 }
 
-    onPaymentChange(type: 'card' | 'cash', data?: any) {
+    onPaymentChange(type: 'card' | 'cash', data?: any, id?: number | string) {
       if (type === 'card') {
         this.selectedPayment = {
+          id: typeof id === 'string' ? parseInt(id, 10) : (id || 0),
           label: this.isItVisaOrMasterCard(data),
           icon: 'credit_card',
           details: `•••• ${data.cardNumber.slice(-4)}`
         };
       } else {
         this.selectedPayment = {
+          id: 0,
           label: 'Pago a domicilio',
           icon: 'payments',
           details: 'Efectivo o Terminal'
@@ -206,19 +215,109 @@ get totalEstimated(): number {
     }
 
     get isOrderValid(): boolean {
-  return (
-    // 1. Que haya al menos un servicio seleccionado
-    this.totalEstimated > 0 && 
-    
-    // 2. Que la dirección esté completa (usando tu objeto selectedAddress)
-    !!this.selectedAddress.fullAddress && 
-    
-    // 3. Que la recolección tenga día y hora
-    !!this.selectedPickup.date && 
-    !!this.selectedPickup.timeSlot && 
-    
-    // 4. Que el método de pago no sea el valor por defecto
-    this.selectedPayment.label !== 'No seleccionado'
-  );
-}
+      return (
+        // 1. Que haya al menos un servicio seleccionado
+        this.totalEstimated > 0 && 
+        
+        // 2. Que la dirección esté completa (usando tu objeto selectedAddress)
+        !!this.selectedAddress.fullAddress && 
+        
+        // 3. Que la recolección tenga día y hora
+        !!this.selectedPickup.date && 
+        !!this.selectedPickup.timeSlot && 
+        
+        // 4. Que el método de pago no sea el valor por defecto
+        this.selectedPayment.label !== 'No seleccionado'
+      );
+    }
+
+    confirmOrder() {
+      const selectedAddressData = this.UserAddresses.find(addr => addr.title === this.selectedAddress.title);
+      
+      if (!selectedAddressData) {
+        console.error('Selected address not found');
+        return;
+      }
+
+      console.log('Selected address data for order:', selectedAddressData);
+  const order: Order = {
+    userId: this.user_session.id,
+    userAddressId: selectedAddressData.id ? Number(selectedAddressData.id) : 0,
+    shippingAddress: {
+      title: selectedAddressData.title,
+      street: selectedAddressData.street,
+      neighbourhood: selectedAddressData.neighbourhood,
+      city: selectedAddressData.city,
+      state: selectedAddressData.state,
+      zipCode: selectedAddressData.zipCode
+    },
+    userPaymentMethodId: this.selectedPayment.id ? Number(this.selectedPayment.id) : 0,
+    pickupDate: this.selectedPickup.date,
+    pickupTime: this.selectedPickup.timeSlot.split(' ')[0] + ':00',
+    isPostPayment: this.selectedPayment.label === 'Pago a domicilio',
+    postPaymentMethod: this.selectedPayment.label === 'Pago a domicilio' ? 'Efectivo o Terminal' : '',
+    status: 1,
+    totalAmount: this.totalEstimated,
+    deliveryFee: this.deliveryFee,
+    courierId: 0,
+    orderDetails: this.cart
+  };
+  const orderPayload = {
+    order: {
+      userId: order.userId,
+      userAddressId: order.userAddressId,
+      shippingAddress: order.shippingAddress,
+      userPaymentMethodId: order.userPaymentMethodId,
+      pickupDate: order.pickupDate,
+      pickupTime: order.pickupTime,
+      isPostPayment: order.isPostPayment,
+      postPaymentMethod: order.postPaymentMethod,
+      status: order.status,
+      totalAmount: order.totalAmount,
+      deliveryFee: order.deliveryFee,
+      courierId: order.courierId
+    },
+    orderDetails: order.orderDetails
+  };
+
+  console.log('Order to be sent:', orderPayload);
+
+  //aqui si el pago es con tarjeta mandar a la pasarela de pagos y esperar confirmacion para crear la orden, si es pago a domicilio crear la orden directamente
+  if(order.isPostPayment){
+    //Se agrega directo
+    this.ordersService.add(orderPayload).subscribe({
+        next: (response) => {
+          
+          console.log('Order created successfully:', response);
+          // Navigate or show success message
+
+          this.router.navigate(['/recollection-received/'])
+        },
+        error: (err) => {
+          console.error('Error creating order:', err);
+        }
+      });
+  }else{
+    alert('Redirigiendo a pasarela de pagos (simulado)');
+    // Simulamos la confirmación del pago después de 2 segundos
+    setTimeout(() => {
+      // Aquí podrías actualizar el estado del pedido a "pagado" o algo similar
+      order.status = 2; // Ejemplo: 2 podría significar "pagado"
+      this.ordersService.add(orderPayload).subscribe({
+        next: (response) => {
+          console.log('Order created successfully after payment:', response);
+          // Navigate or show success message
+          this.router.navigate(['/recollection-received/'])
+        },
+        error: (err) => {
+          console.error('Error creating order after payment:', err);
+        }
+      });
+    }, 2000);
+
+  }
+
+      
+    }
+
 }

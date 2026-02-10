@@ -50,4 +50,13 @@ selectDay(date: Date) {
   isSameDay(date1: Date, date2: Date): boolean {
     return date1.toDateString() === date2.toDateString();
   }
+
+  setDayLabel(){
+    const date = new Date();
+     const options: Intl.DateTimeFormatOptions = { weekday: 'short', day: 'numeric', month: 'short' };
+  const formattedDate = date.toLocaleDateString('es-MX', options);
+
+  const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+  this.selectedDayLabel = capitalizedDate;
+  }
 }

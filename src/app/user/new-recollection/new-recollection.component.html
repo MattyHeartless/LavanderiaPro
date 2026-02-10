@@ -187,7 +187,7 @@
          [class.border-primary]="selectedPayment.details.includes(paymentMethod.cardNumber.slice(-4))"
          [ngClass]="{ 'bg-primary/5': selectedPayment.details.includes(paymentMethod.cardNumber.slice(-4)) }">
     
-    <input (change)="onPaymentChange('card', paymentMethod)" 
+    <input (change)="onPaymentChange('card', paymentMethod, paymentMethod.id)" 
            class="text-primary focus:ring-primary h-5 w-5" name="payment" type="radio" />
     
     <span class="material-symbols-outlined text-slate-400">credit_card</span>
@@ -221,14 +221,14 @@
     
     <div class="space-y-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-6">
       
-      @for (item of cart; track item.id) {
+      @for (item of cart; track item.serviceId) {
         @if (item.quantity > 0) {
           <div class="flex justify-between text-sm transition-all animate-in fade-in">
             <span class="text-slate-500">
-              {{ item.quantity }} {{ item.unit.toLowerCase() }} {{ item.name }}
+              {{ item.quantity }} {{ item.unit.toLowerCase() }} {{ item.serviceName }}
             </span>
             <span class="font-bold text-slate-900 dark:text-slate-100">
-              ${{ (item.price * item.quantity).toFixed(2) }}
+              ${{ (item.servicePrice * item.quantity).toFixed(2) }}
             </span>
           </div>
         }
@@ -245,19 +245,19 @@
     </div>
 
     <div class="space-y-4 mb-8">
-  <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/select-schedule">
+  <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors">
     <div class="flex justify-between items-start">
       <div>
         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Recolección</p>
         <p class="text-xs font-medium text-slate-700 dark:text-slate-300">
-          {{ selectedPickup.date }} • {{ selectedPickup.timeSlot }}
+          {{ selectedPickup.datelabel }} • {{ selectedPickup.timeSlot }}
         </p>
       </div>
-      <span class="material-symbols-outlined text-slate-300 text-sm">edit</span>
+      <!-- <span class="material-symbols-outlined text-slate-300 text-sm">edit</span> -->
     </div>
   </div>
 
-  <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/select-address">
+  <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/address">
     <div class="flex justify-between items-start">
       <div>
         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Dirección de entrega</p>
@@ -272,7 +272,7 @@
       <span class="material-symbols-outlined text-slate-300 text-sm">edit</span>
     </div>
   </div>
-   <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/select-payment">
+   <div class="group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-2 -m-2 rounded-xl transition-colors" routerLink="/payment-methods">
   <div class="flex justify-between items-start">
     <div class="flex-1 min-w-0"> <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Método de pago</p>
       
@@ -310,7 +310,7 @@
   [class.cursor-not-allowed]="!isOrderValid"
   [class.grayscale]="!isOrderValid"
   class="w-full bg-primary text-white h-14 rounded-xl font-bold shadow-lg shadow-primary/20 hover:enabled:scale-[1.02] active:enabled:scale-[0.98] transition-all flex items-center justify-center gap-2" 
-  routerLink="/recollection-received">
+  (click)="confirmOrder()">
   
   <span>Confirmar Pedido</span>
   <span class="material-symbols-outlined">arrow_forward</span>
