@@ -22,6 +22,7 @@ export interface ServiceItem {
   servicePrice: number;
   unit: string;
   quantity: number;
+  uoM:string;
 }
 
 export interface PickupSchedule {

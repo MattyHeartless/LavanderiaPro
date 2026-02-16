@@ -46,6 +46,11 @@ selectedPayment = {id: 0,label: 'No seleccionado', icon: 'payments', details: ''
     this.getServices();
     this.calendar.setDayLabel();  }
 
+testRedirect(){
+  this.router.navigate(['/recollection-received/'], { queryParams: { id: '2' } });
+}
+
+
   loadUserData() {
     const data = localStorage.getItem('user_session');
     
@@ -144,7 +149,7 @@ selectedPayment = {id: 0,label: 'No seleccionado', icon: 'payments', details: ''
       } else {
         // Agregamos el nuevo objeto a la copia
         newCart.push({
-        
+          uoM: service.uoM,
           serviceName: service.name,
           servicePrice: service.price,
           unit: service.uoM,
@@ -259,7 +264,9 @@ get totalEstimated(): number {
     status: 1,
     totalAmount: this.totalEstimated,
     deliveryFee: this.deliveryFee,
-    courierId: 0,
+    courierGuid: 0,
+      courierName: '',
+      courierPhone: '',
     orderDetails: this.cart
   };
   const orderPayload = {
@@ -275,7 +282,7 @@ get totalEstimated(): number {
       status: order.status,
       totalAmount: order.totalAmount,
       deliveryFee: order.deliveryFee,
-      courierId: order.courierId
+      courierGuid: order.courierGuid
     },
     orderDetails: order.orderDetails
   };
@@ -290,8 +297,8 @@ get totalEstimated(): number {
           
           console.log('Order created successfully:', response);
           // Navigate or show success message
-
-          this.router.navigate(['/recollection-received/'])
+this.router.navigate(['/recollection-received/'], { queryParams: { id: response.orderId } });
+      
         },
         error: (err) => {
           console.error('Error creating order:', err);
@@ -307,7 +314,7 @@ get totalEstimated(): number {
         next: (response) => {
           console.log('Order created successfully after payment:', response);
           // Navigate or show success message
-          this.router.navigate(['/recollection-received/'])
+         this.router.navigate(['/recollection-received/'], { queryParams: { id: response.orderId } });
         },
         error: (err) => {
           console.error('Error creating order after payment:', err);

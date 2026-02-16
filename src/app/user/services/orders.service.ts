@@ -28,11 +28,30 @@ export interface Order {
     status: number;
     totalAmount: number;
     deliveryFee: number;
-    courierId: number;
+    courierGuid: number;
+    courierName: string;
+    courierPhone: string;
     createdAt?: string;
     recollectedAt?: string;
     deliveredAt?: string;
     orderDetails: ServiceItem[];
+}
+
+export interface OrderDetail {
+  id: string;
+  orderId: string;
+  serviceId: string;
+  serviceName: string;
+  quantity: number;
+  servicePrice: number;
+  subTotal: number;
+  uoM: string;
+}
+
+export interface OrderResponse {
+  message: string;
+  order: Order;
+  orderDetails: OrderDetail[];
 }
 
 @Injectable({
@@ -48,12 +67,13 @@ export class OrdersService {
     constructor(private http: HttpClient) {}
 
     getById(orderId: string) {
-        return this.http.get<Order>(`${this.ordersUrl}/${orderId}`);
+        return this.http.get<OrderResponse>(`${this.ordersUrl}/${orderId}`);
     }
 
     getByUserId(userId: string) {
-        return this.http.get<Order[]>(`${this.ordersUrl}/user/${userId}`).pipe(
-            tap((orders) => {
+        return this.http.get<{ message: string; data: OrderResponse[] }>(`${this.ordersUrl}/user/${userId}`).pipe(
+            tap((response) => {
+                const orders = response.data.map(item => item.order);
                 this.ordersSubject.next(orders);
             })
         );
