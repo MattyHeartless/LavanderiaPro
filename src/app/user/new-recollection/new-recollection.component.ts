@@ -264,7 +264,7 @@ get totalEstimated(): number {
     status: 1,
     totalAmount: this.totalEstimated,
     deliveryFee: this.deliveryFee,
-    courierGuid: 0,
+    courierGuid: null,
       courierName: '',
       courierPhone: '',
     orderDetails: this.cart
@@ -282,7 +282,9 @@ get totalEstimated(): number {
       status: order.status,
       totalAmount: order.totalAmount,
       deliveryFee: order.deliveryFee,
-      courierGuid: order.courierGuid
+      courierGuid: order.courierGuid,
+      courierName: order.courierName,
+      courierPhone: order.courierPhone
     },
     orderDetails: order.orderDetails
   };

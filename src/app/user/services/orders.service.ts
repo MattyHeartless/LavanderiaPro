@@ -28,7 +28,7 @@ export interface Order {
     status: number;
     totalAmount: number;
     deliveryFee: number;
-    courierGuid: number;
+    courierGuid: string | null;
     courierName: string;
     courierPhone: string;
     createdAt?: string;
