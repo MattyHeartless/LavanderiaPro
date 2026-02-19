@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, ChangePasswordRequest, UpdateRequest } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { UtilService } from '../../shared/util';
 
 @Component({
   selector: 'app-profile',
@@ -26,7 +27,8 @@ export class ProfileComponent {
 
   constructor(
      private authService: AuthService,
-    private router: Router
+    private router: Router,
+    public util: UtilService
   ) {}
 
   

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { OrderResponse, OrdersService } from '../services/orders.service';
 import { CommonModule } from '@angular/common';
-
+import { UtilService } from '../../shared/util';
 @Component({
   selector: 'app-recollection-orders',
   imports: [RouterLink,CommonModule],
@@ -13,7 +13,7 @@ export class RecollectionOrdersComponent {
     expandedOrderId?: string | null = null;
   orders:OrderResponse[] = [];
   user_session: any;
-    constructor(private ordersService: OrdersService) {}
+    constructor(private ordersService: OrdersService, public util: UtilService) {}
 
   ngOnInit() {
     this.loadUserData();

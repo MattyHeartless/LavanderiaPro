@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { PaymentMethod, ProfileService } from '../services/profile.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { UtilService } from '../../shared/util';
 @Component({
   selector: 'app-payment-methods',
   imports: [RouterLink, FormsModule, CommonModule],
@@ -26,7 +26,7 @@ newPaymentMethod: PaymentMethod = {
 UserPaymentMethods: PaymentMethod[] = [];
 showDeleteCardModal: boolean = false;
 cardToDelete: any = null;
-  constructor(private profileService: ProfileService) {
+  constructor(private profileService: ProfileService, public util: UtilService) {
  
    }
   ngOnInit() {

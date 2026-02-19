@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Addresses, ProfileService } from '../services/profile.service';
 import { FormsModule } from '@angular/forms';
+import { UtilService } from '../../shared/util';
 
 @Component({
   selector: 'app-address',
@@ -11,6 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './address.component.css'
 })
 export class AddressComponent {
+
   newAddressData: Addresses = {
     title: '',
     userId: '',
@@ -29,7 +31,7 @@ export class AddressComponent {
   showDeleteModal: boolean = false;
 addressToDelete: any = null;
 selectedAddress: any = null;
- constructor(private profileService: ProfileService) {
+ constructor(private profileService: ProfileService,public util: UtilService) {
 
   }
   ngOnInit() {

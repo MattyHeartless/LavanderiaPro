@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+      showPassword = false;
+   
 model: LoginRequest = {
         email: '',
         password: ''
@@ -40,4 +42,10 @@ model: LoginRequest = {
         }
     });
     }
+
+
+
+togglePassword() {
+  this.showPassword = !this.showPassword;
+}
 }

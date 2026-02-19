@@ -1,23 +1,36 @@
-<header class="sticky top-0 z-50 w-full border-b border-solid border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md px-6 lg:px-40 py-4">
+<header class="sticky top-0 z-50 w-full border-b border-solid border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md px-4 lg:px-40 py-4">
+  <div class="max-w-[1200px] mx-auto flex items-center justify-between gap-2">
+    
+    <div class="flex items-center gap-2 shrink-0">
+      <div class="text-primary">
+        <span class="material-symbols-outlined text-2xl md:text-3xl">local_laundry_service</span>
+      </div>
+      <h2 class="text-lg md:text-xl font-bold leading-tight tracking-tight">Lavandería Pro</h2>
+    </div>
 
-<div class="max-w-[1200px] mx-auto flex items-center justify-between">
-<div class="flex items-center gap-3">
-<div class="text-primary">
-<span class="material-symbols-outlined text-3xl">local_laundry_service</span>
-</div>
-<h2 class="text-xl font-bold leading-tight tracking-tight">Lavandería Pro</h2>
-</div>
-<nav class="hidden md:flex items-center gap-10">
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#servicios" >Servicios</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#como-funciona">Cómo funciona</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#testimonios">Testimonios</a>
-<a class="text-sm font-medium hover:text-primary transition-colors" href="#contacto">Contacto</a>
-</nav>
-<div class="flex items-center gap-3">
-<button class="hidden sm:flex min-w-[84px] items-center justify-center rounded-lg h-10 px-4 bg-slate-50 dark:bg-slate-800 text-sm font-bold" routerLink="/login">Ingresar</button>
-<button class="flex min-w-[84px] items-center justify-center rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20" routerLink="/register">Registro</button>
-</div>
-</div>
+    <nav class="hidden md:flex items-center gap-10">
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#servicios">Servicios</a>
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#como-funciona">Cómo funciona</a>
+      <a class="text-sm font-medium hover:text-primary transition-colors" href="#contacto">Contacto</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button 
+        class="flex items-center justify-center gap-1.5 rounded-lg h-9 md:h-10 px-3 md:px-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-white text-xs md:text-sm font-bold transition-all active:scale-95" 
+        routerLink="/login">
+        <span class="material-symbols-outlined text-lg md:text-xl">login</span>
+        <span>Ingresar</span>
+      </button>
+
+      <button 
+        class="flex items-center justify-center gap-1.5 rounded-lg h-9 md:h-10 px-3 md:px-5 bg-primary text-white text-xs md:text-sm font-bold shadow-lg shadow-primary/20 transition-all active:scale-95" 
+        routerLink="/register">
+        <span class="material-symbols-outlined text-lg md:text-xl">person_add</span>
+        <span>Registro</span>
+      </button>
+    </div>
+    
+  </div>
 </header>
 <main class="relative">
 <section class="px-6 lg:px-40 py-16 lg:py-28 bg-gradient-to-b from-soft-blue to-white dark:from-slate-900 dark:to-background-dark">
@@ -35,7 +48,7 @@
                     </p>
 </div>
 <div class="flex flex-wrap gap-4 items-center">
-<button class="flex items-center justify-center rounded-xl h-14 px-10 bg-primary text-white text-lg font-bold shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform">
+<button routerLink="/login" class="flex items-center justify-center rounded-xl h-14 px-10 bg-primary text-white text-lg font-bold shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform">
                         Programar recolección
                     </button>
 <div class="flex items-center gap-4 pl-2">
@@ -110,8 +123,8 @@
 <h3 class="text-2xl font-bold mb-2">Lavado y Secado</h3>
 <p class="text-slate-500 text-sm mb-6">Limpieza profunda con secado delicado para ropa de diario.</p>
 <div class="flex items-baseline gap-1">
-<span class="text-4xl font-black">$250</span>
-<span class="text-slate-400 font-medium">/ carga</span>
+<span class="text-4xl font-black">$35.00</span>
+<span class="text-slate-400 font-medium">/ KG</span>
 </div>
 </div>
 <ul class="flex flex-col gap-4 mb-10 flex-grow">
@@ -137,7 +150,7 @@
 <h3 class="text-2xl font-bold mb-2">Planchado</h3>
 <p class="text-slate-500 text-sm mb-6">Acabado impecable para camisas, pantalones y vestidos.</p>
 <div class="flex items-baseline gap-1">
-<span class="text-4xl font-black">$25</span>
+<span class="text-4xl font-black">$18.00</span>
 <span class="text-slate-400 font-medium">/ pieza</span>
 </div>
 </div>
@@ -158,25 +171,25 @@
 <div class="mb-8">
 <div class="flex justify-between items-start mb-6">
 <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center">
-<span class="material-symbols-outlined">bolt</span>
+<span class="material-symbols-outlined">bed</span>
 </div>
 </div>
-<h3 class="text-2xl font-bold mb-2">Servicio Express</h3>
-<p class="text-slate-500 text-sm mb-6">Cuando lo necesitas ahora. Prioridad total para tu orden.</p>
+<h3 class="text-2xl font-bold mb-2">Edredones, sábanas y cobijas</h3>
+<p class="text-slate-500 text-sm mb-6">Limpieza total para tu habitación.</p>
 <div class="flex items-baseline gap-1">
-<span class="text-4xl font-black">$450</span>
-<span class="text-slate-400 font-medium">/ carga</span>
+<span class="text-4xl font-black">$100</span>
+<span class="text-slate-400 font-medium">/ paquete</span>
 </div>
 </div>
 <ul class="flex flex-col gap-4 mb-10 flex-grow">
 <li class="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-mint-dark text-lg">check_circle</span> Entrega en 12 horas
+<span class="material-symbols-outlined text-mint-dark text-lg">check_circle</span> Lavado y secado profundo
                         </li>
 <li class="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-mint-dark text-lg">check_circle</span> Recolección inmediata
+<span class="material-symbols-outlined text-mint-dark text-lg">check_circle</span> Doblado compacto de blancos
                         </li>
 <li class="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-400">
-<span class="material-symbols-outlined text-mint-dark text-lg">check_circle</span> Atención VIP
+<span class="material-symbols-outlined text-mint-dark text-lg">check_circle</span> Tratamiento de suavizante premium
                         </li>
 </ul>
 <button class="w-full h-12 rounded-xl bg-slate-50 dark:bg-slate-800 group-hover:bg-primary group-hover:text-white transition-colors font-bold text-slate-700 dark:text-white">Elegir servicio</button>
@@ -249,7 +262,7 @@
 <h2 class="text-4xl lg:text-5xl font-black mb-6 leading-tight">No te preocupes más por la ropa sucia, nosotros lo hacemos por ti</h2>
 <p class="text-blue-100 text-xl font-medium opacity-90">Únete a los miles de clientes que ya disfrutan de su tiempo libre.</p>
 </div>
-<button class="bg-white text-primary px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:scale-105 transition-transform shrink-0">Comenzar ahora</button>
+<button routerLink="/login" class="bg-white text-primary px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:scale-105 transition-transform shrink-0">Comenzar ahora</button>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
 <div class="col-span-1 md:col-span-1">
@@ -271,9 +284,9 @@
 <div>
 <h4 class="font-bold mb-6 text-lg">Contacto</h4>
 <ul class="flex flex-col gap-4 text-slate-400 text-sm">
-<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">call</span> +1 (555) 123-4567</li>
-<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">mail</span> holalavanderiapro.com</li>
-<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">location_on</span> Av. Principal 123, Ciudad</li>
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">call</span> +52 (33) 1879-1893</li>
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">mail</span> hola&commat;lavanderiapro.com</li>
+<li class="flex gap-3"><span class="material-symbols-outlined text-primary text-sm">location_on</span> Guadalajara, Jalisco</li>
 </ul>
 </div>
 <div>
@@ -286,7 +299,7 @@
 </div>
 </div>
 <div class="pt-8 border-t border-slate-800 text-slate-500 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-<p>© 2024 Lavandería Pro. Todos los derechos reservados.</p>
+<p>© 2026 LavanderíaPro. Todos los derechos reservados.</p>
 <div class="flex gap-8">
 <a class="hover:text-white" href="#">Política de Privacidad</a>
 <a class="hover:text-white" href="#">Términos de Servicio</a>

@@ -13,6 +13,7 @@ import { Order, OrdersService } from '../services/orders.service';
   styleUrl: './new-recollection.component.css'
 })
 export class NewRecollectionComponent  {
+isConfirming = false;
 public user_session: any = null;
 UserAddresses : Addresses[] = [];
 UserPaymentMethods: PaymentMethod[] = [];
@@ -243,7 +244,7 @@ get totalEstimated(): number {
         console.error('Selected address not found');
         return;
       }
-
+      this.isConfirming = true;
       console.log('Selected address data for order:', selectedAddressData);
   const order: Order = {
     userId: this.user_session.id,
@@ -261,7 +262,7 @@ get totalEstimated(): number {
     pickupTime: this.selectedPickup.timeSlot.split(' ')[0] + ':00',
     isPostPayment: this.selectedPayment.label === 'Pago a domicilio',
     postPaymentMethod: this.selectedPayment.label === 'Pago a domicilio' ? 'Efectivo o Terminal' : '',
-    status: 1,
+    status: this.selectedPayment.id !== 0 ? 2 : 1,
     totalAmount: this.totalEstimated,
     deliveryFee: this.deliveryFee,
     courierGuid: null,
@@ -307,7 +308,7 @@ this.router.navigate(['/recollection-received/'], { queryParams: { id: response.
         }
       });
   }else{
-    alert('Redirigiendo a pasarela de pagos (simulado)');
+    //alert('Redirigiendo a pasarela de pagos (simulado)');
     // Simulamos la confirmación del pago después de 2 segundos
     setTimeout(() => {
       // Aquí podrías actualizar el estado del pedido a "pagado" o algo similar

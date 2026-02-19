@@ -42,28 +42,56 @@
             </div>
           </label>
           <!-- Password Field -->
-          <div class="flex flex-col w-full">
-            <div class="flex justify-between items-center pb-2">
-              <p class="text-[#0e1b13] dark:text-white text-sm font-bold leading-normal">Contraseña</p>
-              <a class="text-[#4e976a] dark:text-primary text-xs font-medium hover:underline" href="#">¿Olvidaste tu contraseña?</a>
-            </div>
-            <div class="flex w-full items-stretch rounded-xl border border-[#d0e7d9] dark:border-white/20 bg-[#f8fcfa] dark:bg-white/5 focus-within:border-primary transition-all">
-              <div class="text-[#4e976a] dark:text-primary flex items-center justify-center pl-4">
-                <span class="material-symbols-outlined text-xl">lock</span>
-              </div>
-              <input class="form-input flex w-full min-w-0 flex-1 border-none bg-transparent h-14 placeholder:text-[#4e976a]/60 dark:placeholder:text-white/30 px-4 text-base font-normal leading-normal focus:ring-0" [(ngModel)]="model.password" name="password" placeholder="••••••••" type="password" />
-              <div class="text-[#4e976a] dark:text-white/40 flex items-center justify-center pr-4 cursor-pointer hover:text-primary">
-                <span class="material-symbols-outlined text-xl">visibility</span>
-              </div>
-            </div>
-          </div>
+        <div class="flex flex-col w-full">
+  <div class="flex justify-between items-center pb-2">
+    <p class="text-[#0e1b13] dark:text-white text-sm font-bold leading-normal">Contraseña</p>
+    <a class="text-[#4e976a] dark:text-primary text-xs font-medium hover:underline" href="#">¿Olvidaste tu contraseña?</a>
+  </div>
+  
+  <div class="flex w-full items-stretch rounded-xl border border-[#d0e7d9] dark:border-white/20 bg-[#f8fcfa] dark:bg-white/5 focus-within:border-primary transition-all">
+    <div class="text-[#4e976a] dark:text-primary flex items-center justify-center pl-4">
+      <span class="material-symbols-outlined text-xl">lock</span>
+    </div>
+
+    <input 
+      class="form-input flex w-full min-w-0 flex-1 border-none bg-transparent h-14 placeholder:text-[#4e976a]/60 dark:placeholder:text-white/30 px-4 text-base font-normal leading-normal focus:ring-0" 
+      [(ngModel)]="model.password" 
+      name="password" 
+      placeholder="••••••••" 
+      [type]="showPassword ? 'text' : 'password'" />
+
+    <div 
+      (click)="togglePassword()"
+      class="text-[#4e976a] dark:text-white/40 flex items-center justify-center pr-4 cursor-pointer hover:text-primary transition-colors">
+      <span class="material-symbols-outlined text-xl">
+        {{ showPassword ? 'visibility_off' : 'visibility' }}
+      </span>
+    </div>
+  </div>
+</div>
           <div class="text-red-500 text-sm mt-2" *ngIf="errorMessage">{{ errorMessage }}</div>
           <!-- Submit Button -->
-          <div class="flex pt-4">
-            <button class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-[#0e1b13] text-lg font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform"  type="submit">
-              <span class="truncate">Ingresar</span>
-            </button>
-          </div>
+         <div class="flex pt-4">
+  <button 
+    (click)="login()"
+    [disabled]="loading"
+    class="flex min-w-[84px] w-full items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-[#0e1b13] text-lg font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100" 
+    type="submit">
+    
+    @if (!loading) {
+      <span class="truncate">Ingresar</span>
+    } @else {
+      <div class="flex items-center gap-3">
+        <svg class="animate-spin h-5 w-5 text-[#0e1b13]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="truncate">Iniciando sesión...</span>
+      </div>
+    }
+
+  </button>
+</div>
         </form>
         <!-- Footer Link -->
         <div class="text-center pt-4">
