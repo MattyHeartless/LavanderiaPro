@@ -11,6 +11,7 @@ import { UtilService } from '../../shared/util';
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
+  isSaving = false;
   model: UpdateRequest = {
     id: '',
     email: '',
@@ -56,9 +57,10 @@ export class ProfileComponent {
   }
 
   updateUserData() {
-    
+    this.isSaving = true;
     this.authService.update(this.model).subscribe({
       next: (response) => {
+         this.isSaving = false;
         this.user_session = response;
         console.log('Usuario actualizado:', response);
        if (this.model.currentPassword != "" && this.model.newPassword != "") {
@@ -68,15 +70,18 @@ export class ProfileComponent {
           this.passwordModel.newPassword = this.model.newPassword!;
           this.authService.changePassword(this.passwordModel).subscribe({
             next: (response) => {
+              this.isSaving = false;
               console.log("Contraseña actualizada:", response);
             },
             error: (error) => {
+              this.isSaving = false;
               console.error("Error al actualizar contraseña:", error);
             }
           });
        }
       },
       error: (error) => {
+        this.isSaving = false;
         console.error('Error al actualizar usuario:', error);
       }
     });
