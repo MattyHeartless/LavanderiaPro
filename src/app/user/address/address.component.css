@@ -1,0 +1,31 @@
+.address-map {
+  min-height: 320px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 1rem;
+  border: 1px solid #dbe4ee;
+}
+
+:host ::ng-deep .address-map .leaflet-control-attribution {
+  font-size: 10px;
+}
+
+:host ::ng-deep .address-map-pin {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+:host ::ng-deep .address-map-pin span {
+  align-items: center;
+  background: #39e079;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.28);
+  color: #0f172a;
+  display: inline-flex;
+  font-size: 22px;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}

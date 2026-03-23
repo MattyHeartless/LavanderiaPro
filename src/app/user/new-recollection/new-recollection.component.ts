@@ -4,7 +4,7 @@ import { Addresses, PaymentMethod, ProfileService } from '../services/profile.se
 import { CatalogsService, PickupSchedule, Service, ServiceItem, UserAddress } from '../services/catalogs.service';
 import { CommonModule } from '@angular/common';
 import { CalendarComponent } from '../utils/calendar';
-import { Order, OrdersService } from '../services/orders.service';
+import { CreateOrderRequest, Order, OrdersService } from '../services/orders.service';
 
 @Component({
   selector: 'app-new-recollection',
@@ -67,8 +67,20 @@ testRedirect(){
     }
   }
 
+  private get sessionUserId(): string {
+    return this.user_session?.id ?? this.user_session?.userId ?? '';
+  }
+
+  private get sessionUserName(): string {
+    return this.user_session?.fullName ?? '';
+  }
+
+  private get sessionUserPhone(): string {
+    return this.user_session?.phoneNumber ?? '';
+  }
+
     getAddresses(): void {
-    const userId = this.user_session.id; // Get userId from auth service or route params
+    const userId = this.sessionUserId; // Get userId from auth service or route params
     console.log('Loading addresses for userId:', userId);
     this.profileService.getAddress(userId).subscribe({
       next: (data:any) => {
@@ -95,7 +107,7 @@ testRedirect(){
 
       getPaymentMethods(): void {
     
-      this.profileService.getPaymentMethods(this.user_session.id).subscribe({
+      this.profileService.getPaymentMethods(this.sessionUserId).subscribe({
         next: (paymentMethods: any) => {
           this.UserPaymentMethods = paymentMethods.data;
           console.log('Payment methods loaded:', this.UserPaymentMethods);
@@ -247,7 +259,9 @@ get totalEstimated(): number {
       this.isConfirming = true;
       console.log('Selected address data for order:', selectedAddressData);
   const order: Order = {
-    userId: this.user_session.id,
+    userId: this.sessionUserId,
+    userName: this.sessionUserName,
+    userPhone: this.sessionUserPhone,
     userAddressId: selectedAddressData.id ? Number(selectedAddressData.id) : 0,
     shippingAddress: {
       title: selectedAddressData.title,
@@ -255,7 +269,9 @@ get totalEstimated(): number {
       neighbourhood: selectedAddressData.neighbourhood,
       city: selectedAddressData.city,
       state: selectedAddressData.state,
-      zipCode: selectedAddressData.zipCode
+      zipCode: selectedAddressData.zipCode,
+      latitude: selectedAddressData.latitude ?? null,
+      longitude: selectedAddressData.longitude ?? null
     },
     userPaymentMethodId: this.selectedPayment.id ? Number(this.selectedPayment.id) : 0,
     pickupDate: this.selectedPickup.date,
@@ -270,9 +286,11 @@ get totalEstimated(): number {
       courierPhone: '',
     orderDetails: this.cart
   };
-  const orderPayload = {
+  const orderPayload: CreateOrderRequest = {
     order: {
       userId: order.userId,
+      userName: order.userName,
+      userPhone: order.userPhone,
       userAddressId: order.userAddressId,
       shippingAddress: order.shippingAddress,
       userPaymentMethodId: order.userPaymentMethodId,

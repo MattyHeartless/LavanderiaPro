@@ -13,6 +13,8 @@ export interface Addresses {
     state: string;
     zipCode: string;
     country: string;
+    latitude?: number | null;
+    longitude?: number | null;
     
 }
 

@@ -13,11 +13,15 @@ export interface ShippingAddress {
     city: string;
     state: string;
     zipCode: string;
+    latitude?: number | null;
+    longitude?: number | null;
 }
 
 export interface Order {
     id?: string;
     userId: string;
+    userName: string;
+    userPhone: string;
     userAddressId: number;
     shippingAddress: ShippingAddress;
     userPaymentMethodId: number;
@@ -54,6 +58,11 @@ export interface OrderResponse {
   orderDetails: OrderDetail[];
 }
 
+export interface CreateOrderRequest {
+    order: Omit<Order, 'id' | 'createdAt' | 'recollectedAt' | 'deliveredAt' | 'orderDetails'>;
+    orderDetails: ServiceItem[];
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -79,7 +88,7 @@ export class OrdersService {
         );
     }
 
-    add(data: any) {
+    add(data: CreateOrderRequest) {
         return this.http.post<{ orderId: string, message: string }>(`${this.ordersUrl}`, data);
     }
 
