@@ -8,6 +8,7 @@ import { PaymentMethodsComponent } from './user/payment-methods/payment-methods.
 import { RecollectionOrdersComponent } from './user/recollection-orders/recollection-orders.component';
 import { NewRecollectionComponent } from './user/new-recollection/new-recollection.component';
 import { RecollectionReceivedComponent } from './user/recollection-received/recollection-received.component';
+import { CouponsComponent } from './user/coupons/coupons.component';
 
 // Importamos el guard que creamos
 import { authGuard } from './auth.guard'; 
@@ -33,6 +34,11 @@ export const routes: Routes = [
     { 
         path: 'payment-methods', 
         component: PaymentMethodsComponent, 
+        canActivate: [authGuard] 
+    },
+    { 
+        path: 'coupons', 
+        component: CouponsComponent, 
         canActivate: [authGuard] 
     },
     { 

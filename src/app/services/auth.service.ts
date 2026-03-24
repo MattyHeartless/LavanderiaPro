@@ -16,10 +16,28 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
+  id?: string;
   userId: string;
   email: string;
   fullName: string;
   phoneNumber:string;
+}
+
+export interface UserCoupon {
+  id: string;
+  couponId: string;
+  status: string;
+  createdAt: string;
+  redeemedAt: string | null;
+  orderId: string | null;
+  source: string | null;
+  expiresAt: string | null;
+  couponCodeSnapshot: string;
+  couponNameSnapshot: string;
+  couponDescriptionSnapshot: string;
+  benefitTypeSnapshot: string;
+  benefitValueSnapshot: number;
+  eventTypeSnapshot: string | null;
 }
 
 export interface UpdateRequest {
@@ -69,6 +87,10 @@ export class AuthService {
 
   changePassword(data: ChangePasswordRequest) {
     return this.http.post(`${this.authUrl}/change-password`, data);
+  }
+
+  getUserCoupons(userId: string) {
+    return this.http.get<UserCoupon[]>(`${this.authUrl}/users/${userId}/coupons`);
   }
 
 }
