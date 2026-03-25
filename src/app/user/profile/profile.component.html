@@ -118,19 +118,62 @@
     </div>
   </div>
 </main>
-<footer class="bg-slate-900 text-white mt-24 py-12 px-6 lg:px-40">
+<footer class="bg-slate-900 text-white mt-12 py-12 px-6 lg:px-40 border-t border-slate-800">
   <div class="max-w-[1200px] mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-      <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-3xl text-primary">local_laundry_service</span>
-        <h2 class="text-xl font-black uppercase tracking-tight">Lavandería Pro</h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <div class="col-span-1 md:col-span-1">
+        <div class="flex items-center gap-3 mb-6">
+          <span class="material-symbols-outlined text-3xl text-primary">local_laundry_service</span>
+          <h2 class="text-xl font-black uppercase tracking-tight">Lavandería Pro</h2>
+        </div>
+        <p class="text-slate-400 text-sm leading-relaxed">Cuidado experto y puntualidad garantizada. Servicio premium a domicilio en toda la ciudad.</p>
       </div>
-      <div class="flex gap-12 text-slate-400 text-sm">
-        <a class="hover:text-white transition-colors" href="#">Términos</a>
-        <a class="hover:text-white transition-colors" href="#">Privacidad</a>
-        <a class="hover:text-white transition-colors" href="#">Soporte</a>
+      <div>
+        <h4 class="font-bold mb-6 text-lg">Mi Cuenta</h4>
+        <ul class="flex flex-col gap-4 text-slate-400 text-sm">
+          <li>
+            <a class="hover:text-white transition-colors" routerLink="/profile">Perfil</a>
+          </li>
+          <li>
+            <a class="hover:text-white transition-colors" routerLink="/address">Direcciones</a>
+          </li>
+          <li>
+            <a class="hover:text-white transition-colors" routerLink="/payment-methods">Métodos de Pago</a>
+          </li>
+          <li>
+            <a class="hover:text-white transition-colors" routerLink="/coupons">Cupones</a>
+          </li>
+          <li>
+            <a class="hover:text-white transition-colors" routerLink="/recollection-orders">Historial de Pedidos</a>
+          </li>
+        </ul>
       </div>
-      <p class="text-slate-500 text-sm">© 2024 Lavandería Pro. Todos los derechos reservados.</p>
+      <div>
+        <h4 class="font-bold mb-6 text-lg">Contacto</h4>
+        <ul class="flex flex-col gap-4 text-slate-400 text-sm">
+          <li class="flex gap-3">
+            <span class="material-symbols-outlined text-primary text-sm">call</span> (33) 1879 1893
+          </li>
+          <li class="flex gap-3">
+            <span class="material-symbols-outlined text-primary text-sm">mail</span> hola&#64;lavanderiapro.com
+          </li>
+          <li class="flex gap-3">
+            <span class="material-symbols-outlined text-primary text-sm">location_on</span> Guadalajara, Jalisco, Mexico
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold mb-6 text-lg">Ayuda</h4>
+        <p class="text-slate-400 text-sm mb-6">¿Tienes dudas sobre tu servicio?</p>
+        <button class="w-full bg-slate-800 border border-slate-700 py-3 rounded-xl text-sm font-bold hover:bg-slate-700 transition-colors">Centro de Soporte</button>
+      </div>
+    </div>
+    <div class="pt-8 border-t border-slate-800 text-slate-500 text-xs flex flex-col md:flex-row justify-between items-center gap-4">
+      <p>© 2024 Lavandería Pro. Todos los derechos reservados.</p>
+      <div class="flex gap-8">
+        <a class="hover:text-white" href="#">Política de Privacidad</a>
+        <a class="hover:text-white" href="#">Términos de Servicio</a>
+      </div>
     </div>
   </div>
 </footer>

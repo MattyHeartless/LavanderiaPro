@@ -5,7 +5,8 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideHttpClient(),provideRouter(routes, withInMemoryScrolling({ 
-      scrollPositionRestoration: 'enabled' 
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideHttpClient(),provideRouter(routes, withInMemoryScrolling({
+      scrollPositionRestoration: 'enabled',
+      anchorScrolling: 'enabled'
     }))]
 };

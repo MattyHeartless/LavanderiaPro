@@ -52,6 +52,19 @@ export interface OrderDetail {
   uoM: string;
 }
 
+export interface OrderEvidence {
+  id: string;
+  orderId: string;
+  orderStatusEvidence: number;
+  courierId: string;
+  fileUrl: string;
+  relativePath: string;
+  mimeType: string;
+  sizeBytes: number;
+  note: string;
+  createdAt: string;
+}
+
 export interface OrderResponse {
   message: string;
   order: Order;
@@ -86,6 +99,14 @@ export class OrdersService {
                 this.ordersSubject.next(orders);
             })
         );
+    }
+
+    getEvidences(orderId: string) {
+        return this.http.get<OrderEvidence[]>(`${this.ordersUrl}/${orderId}/evidences`);
+    }
+
+    getEvidenceImageUrl(evidenceId: string) {
+        return `${this.ordersUrl}/evidences/${evidenceId}/image`;
     }
 
     add(data: CreateOrderRequest) {

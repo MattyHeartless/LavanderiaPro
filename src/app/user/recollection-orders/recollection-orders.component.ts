@@ -1,8 +1,16 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { OrderResponse, OrdersService } from '../services/orders.service';
+import { OrderEvidence, OrderResponse, OrdersService } from '../services/orders.service';
 import { CommonModule } from '@angular/common';
 import { UtilService } from '../../shared/util';
+
+interface EvidenceStage {
+  status: number;
+  pendingLabel: string;
+  completedLabel: string;
+  icon: string;
+}
+
 @Component({
   selector: 'app-recollection-orders',
   imports: [RouterLink,CommonModule],
@@ -10,10 +18,19 @@ import { UtilService } from '../../shared/util';
   styleUrl: './recollection-orders.component.css'
 })
 export class RecollectionOrdersComponent {
-    expandedOrderId?: string | null = null;
+  expandedOrderId?: string | null = null;
   orders:OrderResponse[] = [];
   user_session: any;
-    constructor(private ordersService: OrdersService, public util: UtilService) {}
+  evidenceMap: Record<string, OrderEvidence[]> = {};
+  evidenceLoadingMap: Record<string, boolean> = {};
+  selectedEvidence: OrderEvidence | null = null;
+  readonly evidenceStages: EvidenceStage[] = [
+    { status: 3, pendingLabel: 'Recolectando', completedLabel: 'Recolectado', icon: 'local_shipping' },
+    { status: 4, pendingLabel: 'En proceso', completedLabel: 'Procesado', icon: 'local_laundry_service' },
+    { status: 5, pendingLabel: 'En entrega', completedLabel: 'Entregado', icon: 'near_me' }
+  ];
+
+  constructor(private ordersService: OrdersService, public util: UtilService) {}
 
   ngOnInit() {
     this.loadUserData();
@@ -34,9 +51,13 @@ export class RecollectionOrdersComponent {
 
     
 
-toggleDetail(orderId?: string) {
-  this.expandedOrderId = this.expandedOrderId === orderId ? null : orderId;
-}
+  toggleDetail(orderId?: string) {
+    this.expandedOrderId = this.expandedOrderId === orderId ? null : orderId;
+
+    if (this.expandedOrderId && !this.evidenceMap[this.expandedOrderId] && !this.evidenceLoadingMap[this.expandedOrderId]) {
+      this.loadOrderEvidences(this.expandedOrderId);
+    }
+  }
 
      
   loadUserData() {
@@ -143,6 +164,79 @@ toggleDetail(orderId?: string) {
     const date = new Date(dateString);
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
     return date.toLocaleDateString('en-US', options);
+  }
+
+  loadOrderEvidences(orderId: string) {
+    this.evidenceLoadingMap[orderId] = true;
+
+    this.ordersService.getEvidences(orderId).subscribe({
+      next: (response) => {
+        this.evidenceMap[orderId] = [...response].sort((a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        this.evidenceLoadingMap[orderId] = false;
+      },
+      error: (err: any) => {
+        console.error(`Error retrieving evidences for order ${orderId}:`, err);
+        this.evidenceMap[orderId] = [];
+        this.evidenceLoadingMap[orderId] = false;
+      }
+    });
+  }
+
+  isExpanded(orderId?: string): boolean {
+    return this.expandedOrderId === orderId;
+  }
+
+  getOrderEvidences(orderId?: string): OrderEvidence[] {
+    if (!orderId) {
+      return [];
+    }
+
+    return this.evidenceMap[orderId] || [];
+  }
+
+  getEvidenceTimeline(orderId?: string) {
+    const evidences = this.getOrderEvidences(orderId);
+
+    return this.evidenceStages.map((stage) => {
+      const stageEvidences = evidences.filter((evidence) => evidence.orderStatusEvidence === stage.status);
+
+      return {
+        ...stage,
+        label: stageEvidences.length ? stage.completedLabel : stage.pendingLabel,
+        evidences: stageEvidences,
+        latestEvidenceAt: stageEvidences[0]?.createdAt || null
+      };
+    });
+  }
+
+  formatEvidenceDate(dateString?: string | null): string {
+    if (!dateString) {
+      return '';
+    }
+
+    const date = new Date(dateString);
+    const options: Intl.DateTimeFormatOptions = {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+
+    return date.toLocaleDateString('es-MX', options);
+  }
+
+  getEvidenceImageUrl(evidenceId: string): string {
+    return this.ordersService.getEvidenceImageUrl(evidenceId);
+  }
+
+  openEvidenceModal(evidence: OrderEvidence) {
+    this.selectedEvidence = evidence;
+  }
+
+  closeEvidenceModal() {
+    this.selectedEvidence = null;
   }
 
 }
