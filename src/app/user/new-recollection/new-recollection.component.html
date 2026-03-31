@@ -46,6 +46,10 @@
         </div>
         <div class="flex items-center gap-2 shrink-0 border-b-2 border-transparent pb-2 pr-4 text-slate-400">
           <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] flex items-center justify-center font-bold">4</span>
+          <span class="text-sm font-medium">Entrega</span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 border-b-2 border-transparent pb-2 pr-4 text-slate-400">
+          <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-800 text-[10px] flex items-center justify-center font-bold">5</span>
           <span class="text-sm font-medium">Pago</span>
         </div>
       </nav>
@@ -97,26 +101,157 @@
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">2. Tipo de Servicio y Prendas</h2>
           </div>
           <div class="space-y-4">
-            <div *ngFor="let service of Services" class="flex items-center justify-between p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-              <div class="flex items-center gap-4">
-                <div class="{{ service.themeIcon }}">
+            <div *ngFor="let service of Services" class="flex flex-col gap-4 p-4 sm:p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+              <div class="flex items-start gap-4">
+                <div class="{{ service.themeIcon }} shrink-0">
                   <span class="material-symbols-outlined">{{ service.icon }}</span>
                 </div>
-                <div>
+                <div class="min-w-0 flex-1">
                   <h4 class="font-bold text-slate-900 dark:text-white">{{ service.name }}</h4>
-                    <p class="text-xs text-slate-400">{{service.description}}</p>
-                  <p class="text-xs text-slate-400">${{ service.price }} MXN / {{ service.uoM }}</p>
+                  <p class="text-xs text-slate-400">{{service.description}}</p>
+                  @if (!hasBulkOptions(service)) {
+                    <div class="flex flex-wrap gap-2 mt-3">
+                      <label *ngFor="let option of service.pricingOptions" class="cursor-pointer">
+                        <input
+                          type="radio"
+                          class="sr-only"
+                          [name]="'pricing-option-' + service.id"
+                          [checked]="getSelectedPricingOption(service)?.id === option.id"
+                          (change)="onPricingOptionChange(service.id, option.id)" />
+                        <span
+                          class="inline-flex items-center rounded-full border px-3 py-2 text-xs font-medium leading-tight transition-all"
+                          [ngClass]="getSelectedPricingOption(service)?.id === option.id
+                            ? 'border-primary bg-primary/10 text-primary'
+                            : 'border-slate-200 text-slate-500 dark:border-slate-700 dark:text-slate-300'">
+                          {{ option.optionName }} · ${{ option.price }} / {{ option.uoM }}
+                        </span>
+                      </label>
+                    </div>
+                  } @else {
+                    <p class="text-xs text-slate-400 mt-3">Configura cada tipo de bulto por separado.</p>
+                  }
+                  @if (!hasBulkOptions(service)) {
+                    <p class="text-xs text-slate-400 mt-2">${{ getServiceDisplayPrice(service) }} MXN / {{ getServiceDisplayUnit(service) }}</p>
+                  }
                 </div>
               </div>
-              <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
-                <button (click)="updateQuantity(service, -1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined">remove</span>
-                </button>
-                <span class="text-sm font-bold min-w-[20px] text-center">{{ service.quantity || 0 }}</span>
-                <button (click)="updateQuantity(service, 1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined">add</span>
-                </button>
-              </div>
+              @if (hasBulkOptions(service)) {
+                <div class="mt-4 border-t border-dashed border-slate-200 dark:border-slate-700 pt-4">
+                  <div class="flex items-start justify-between gap-3 mb-4">
+                    <div>
+                      <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-primary">Tipos de bulto</p>
+                      <p class="text-xs text-slate-500 dark:text-slate-300 mt-1">Configura cada tipo de bulto con sus cantidades de color y ropa blanca.</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                      <span class="block text-[10px] font-semibold uppercase tracking-wide text-slate-400">Activos</span>
+                      <span class="block text-lg font-black text-slate-900 dark:text-white">{{ getBulkItemsForService(service).length }}</span>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    @for (option of getSortedBulkOptions(service); track option.id) {
+                        <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 px-3 py-3">
+                          <button
+                            type="button"
+                            class="w-full flex items-center justify-between gap-3 text-left"
+                            (click)="toggleBulkOption(service.id, option.id)">
+                            <div class="min-w-0">
+                              <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ option.optionName }}</p>
+                              <p class="text-xs text-slate-500 dark:text-slate-300">
+                                ${{ option.price }} MXN / {{ option.uoM }}
+                                @if (getBulkWeightRange(option.optionName)) {
+                                  · {{ getBulkWeightRange(option.optionName) }}
+                                }
+                                · Color: {{ getBulkOptionColoredQuantity(option.id) }} · Blanca: {{ getBulkOptionBlackQuantity(option.id) }}
+                              </p>
+                            </div>
+                            <div class="flex items-center gap-3 shrink-0">
+                              <span class="text-sm font-bold text-slate-700 dark:text-slate-200">
+                                {{ getBulkOptionQuantity(option.id) }}
+                              </span>
+                              <span
+                                class="material-symbols-outlined text-slate-400 transition-transform"
+                                [class.rotate-180]="isBulkOptionExpanded(option.id)">
+                                expand_more
+                              </span>
+                            </div>
+                          </button>
+                          @if (isBulkOptionExpanded(option.id)) {
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <label class="block">
+                              <div class="flex items-center justify-between gap-3">
+                                <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">Color</span>
+                                <span class="text-[11px] font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-300">Color</span>
+                              </div>
+                                <div class="mt-2 flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 overflow-hidden">
+                                  <button
+                                    type="button"
+                                    class="h-12 w-12 shrink-0 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                    (click)="onPricingOptionChange(service.id, option.id); adjustBulkQuantity(service, 'colored', -1)">
+                                    <span class="material-symbols-outlined">remove</span>
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    inputmode="numeric"
+                                    class="h-12 min-w-0 flex-1 border-0 bg-transparent px-2 text-center text-base font-semibold text-slate-900 dark:text-slate-100 outline-none shadow-none focus:ring-0"
+                                    [value]="getBulkOptionColoredQuantity(option.id)"
+                                    (focus)="onPricingOptionChange(service.id, option.id)"
+                                    (input)="onPricingOptionChange(service.id, option.id); updateBulkQuantity(service, 'colored', $any($event.target).value)" />
+                                  <button
+                                    type="button"
+                                    class="h-12 w-12 shrink-0 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                    (click)="onPricingOptionChange(service.id, option.id); adjustBulkQuantity(service, 'colored', 1)">
+                                    <span class="material-symbols-outlined">add</span>
+                                  </button>
+                                </div>
+                            </label>
+                            <label class="block">
+                              <div class="flex items-center justify-between gap-3">
+                                <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">Blanca</span>
+                                <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">Blanca</span>
+                              </div>
+                                <div class="mt-2 flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 overflow-hidden">
+                                  <button
+                                    type="button"
+                                    class="h-12 w-12 shrink-0 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                    (click)="onPricingOptionChange(service.id, option.id); adjustBulkQuantity(service, 'black', -1)">
+                                    <span class="material-symbols-outlined">remove</span>
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    inputmode="numeric"
+                                    class="h-12 min-w-0 flex-1 border-0 bg-transparent px-2 text-center text-base font-semibold text-slate-900 dark:text-slate-100 outline-none shadow-none focus:ring-0"
+                                    [value]="getBulkOptionBlackQuantity(option.id)"
+                                    (focus)="onPricingOptionChange(service.id, option.id)"
+                                    (input)="onPricingOptionChange(service.id, option.id); updateBulkQuantity(service, 'black', $any($event.target).value)" />
+                                  <button
+                                    type="button"
+                                    class="h-12 w-12 shrink-0 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                    (click)="onPricingOptionChange(service.id, option.id); adjustBulkQuantity(service, 'black', 1)">
+                                    <span class="material-symbols-outlined">add</span>
+                                  </button>
+                                </div>
+                              </label>
+                            </div>
+                          }
+                        </div>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="flex items-center justify-end">
+                  <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
+                    <button (click)="updateQuantity(service, -1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                      <span class="material-symbols-outlined">remove</span>
+                    </button>
+                    <span class="text-sm font-bold min-w-[20px] text-center">{{ getCartItemQuantity(service) }}</span>
+                    <button (click)="updateQuantity(service, 1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                      <span class="material-symbols-outlined">add</span>
+                    </button>
+                  </div>
+                </div>
+              }
             </div>
             
           </div>
@@ -180,7 +315,46 @@
           </div>
         </section>
         <section>
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">4. Método de Pago</h2>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">4. Modo de Entrega</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <label *ngFor="let mode of deliveryModes"
+              class="bg-white dark:bg-slate-900 relative flex flex-col gap-3 p-4 rounded-2xl border transition-all cursor-pointer"
+              [class.border-primary]="selectedDeliveryMode?.id === mode.id"
+              [class.border-slate-200]="selectedDeliveryMode?.id !== mode.id"
+              [class.dark:border-slate-700]="selectedDeliveryMode?.id !== mode.id"
+              [ngClass]="{ 'bg-primary/5': selectedDeliveryMode?.id === mode.id }">
+
+              <input
+                type="radio"
+                name="delivery-mode"
+                class="absolute top-4 right-4 text-primary focus:ring-primary h-5 w-5"
+                [checked]="selectedDeliveryMode?.id === mode.id"
+                (change)="selectDeliveryMode(mode)" />
+
+              <div class="pr-8">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <p class="text-sm font-bold text-slate-900 dark:text-white">{{ mode.name }}</p>
+                  @if (mode.code === 'EXPRESS_3H') {
+                    <span class="inline-flex items-center rounded-full bg-amber-100 text-amber-700 px-2 py-1 text-[10px] font-bold uppercase tracking-wide">Express</span>
+                  }
+                  @if (mode.code === 'TWENTY_FOUR_HOURS') {
+                    <span class="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 px-2 py-1 text-[10px] font-bold uppercase tracking-wide">Más económico</span>
+                  }
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-300 mt-1">Entrega estimada en {{ mode.etaHours }} horas</p>
+              </div>
+
+              <div class="flex items-end justify-between gap-3">
+                <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Recargo</span>
+                <span class="text-lg font-black" [ngClass]="mode.surchargeAmount > 0 ? 'text-slate-900 dark:text-white' : 'text-emerald-600 dark:text-emerald-300'">
+                  {{ mode.surchargeAmount > 0 ? '+$' + mode.surchargeAmount.toFixed(2) : 'Sin recargo' }}
+                </span>
+              </div>
+            </label>
+          </div>
+        </section>
+        <section>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">5. Método de Pago</h2>
         <div class="space-y-3">
   <label *ngFor="let paymentMethod of UserPaymentMethods" 
          class="flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer"
@@ -220,11 +394,17 @@
     <h3 class="text-lg font-black text-slate-900 dark:text-white mb-6">Resumen del pedido</h3>
     <div class="space-y-4 mb-6 border-b border-slate-100 dark:border-slate-800 pb-6">
       
-      @for (item of cart; track item.serviceId) {
+      @for (item of cart; track item.servicePricingOptionId ?? item.serviceId) {
         @if (item.quantity > 0) {
           <div class="flex justify-between text-sm transition-all animate-in fade-in">
             <span class="text-slate-500">
               {{ item.quantity }} {{ item.unit.toLowerCase() }} {{ item.serviceName }}
+              @if (item.pricingOptionName) {
+                ({{ item.pricingOptionName }})
+              }
+              @if ((item.coloredClothQuantity ?? 0) + (item.blackClothQuantity ?? 0) > 0) {
+                · Bultos color: {{ item.coloredClothQuantity ?? 0 }} · Bultos negra: {{ item.blackClothQuantity ?? 0 }}
+              }
             </span>
             <span class="font-bold text-slate-900 dark:text-slate-100">
               ${{ (item.servicePrice * item.quantity).toFixed(2) }}
@@ -238,8 +418,13 @@
       }
 
       <div class="flex justify-between text-sm">
-        <span class="text-slate-500">Servicio a domicilio</span>
-        <span class="text-primary font-bold">{{ deliveryFee === 0 ? 'GRATIS' : '$' + deliveryFee }}</span>
+        <span class="text-slate-500">Envío base</span>
+        <span class="font-bold text-slate-900 dark:text-slate-100">${{ baseDeliveryFee.toFixed(2) }}</span>
+      </div>
+
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">Recargo por modo</span>
+        <span class="text-primary font-bold">{{ getDeliveryModeSurcharge() === 0 ? 'Sin recargo' : '+$' + getDeliveryModeSurcharge().toFixed(2) }}</span>
       </div>
     </div>
 
@@ -253,6 +438,21 @@
         </p>
       </div>
       <!-- <span class="material-symbols-outlined text-slate-300 text-sm">edit</span> -->
+    </div>
+  </div>
+  <div class="group p-2 -m-2 rounded-xl transition-colors">
+    <div class="flex justify-between items-start">
+      <div>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Modo de entrega</p>
+        @if (selectedDeliveryMode) {
+          <p class="text-xs font-medium text-slate-700 dark:text-slate-300">
+            <span class="font-bold text-primary">{{ selectedDeliveryMode.name }}</span>
+            <span class="ml-1 text-slate-500">· {{ selectedDeliveryMode.etaHours }} horas</span>
+          </p>
+        } @else {
+          <p class="text-xs font-medium text-red-400 italic">No has seleccionado modo de entrega</p>
+        }
+      </div>
     </div>
   </div>
 
@@ -325,7 +525,7 @@
 
 @if (!isOrderValid && totalEstimated > 0) {
   <p class="text-[10px] text-center text-red-400 mt-2 animate-pulse">
-    Por favor, completa la dirección, fecha y método de pago.
+    Por favor, completa la dirección, fecha, modo de entrega, método de pago y el desglose requerido.
   </p>
 }
 

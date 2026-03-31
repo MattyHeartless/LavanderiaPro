@@ -17,6 +17,16 @@ export interface ShippingAddress {
     longitude?: number | null;
 }
 
+export interface DeliveryMode {
+  id: number;
+  code: string;
+  name: string;
+  etaHours: number;
+  surchargeAmount: number;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 export interface Order {
     id?: string;
     userId: string;
@@ -27,6 +37,7 @@ export interface Order {
     userPaymentMethodId: number;
     pickupDate: string;
     pickupTime: string;
+    deliveryModeId?: number;
     isPostPayment: boolean;
     postPaymentMethod: string;
     status: number;
@@ -50,6 +61,10 @@ export interface OrderDetail {
   servicePrice: number;
   subTotal: number;
   uoM: string;
+  servicePricingOptionId?: string | null;
+  pricingOptionName?: string | null;
+  coloredClothQuantity?: number | null;
+  blackClothQuantity?: number | null;
 }
 
 export interface OrderEvidence {
@@ -107,6 +122,10 @@ export class OrdersService {
 
     getEvidenceImageUrl(evidenceId: string) {
         return `${this.ordersUrl}/evidences/${evidenceId}/image`;
+    }
+
+    getDeliveryModes() {
+        return this.http.get<{ message: string; data: DeliveryMode[] }>(`${this.ordersUrl}/delivery-modes`);
     }
 
     add(data: CreateOrderRequest) {
