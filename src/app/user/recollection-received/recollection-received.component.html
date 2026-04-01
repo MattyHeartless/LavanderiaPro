@@ -5,7 +5,7 @@
       <div class="text-primary">
         <span class="material-symbols-outlined text-2xl md:text-3xl">local_laundry_service</span>
       </div>
-      <h2 class="text-lg md:text-xl font-bold leading-tight tracking-tight whitespace-nowrap">Lavandería Pro</h2>
+      <h2 class="text-lg md:text-xl font-bold leading-tight tracking-tight whitespace-nowrap">YOTELAVO</h2>
     </div>
 
     <div class="flex items-center gap-3 md:gap-6">
@@ -48,7 +48,7 @@
           </div>
           <div>
             <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Tipo de Servicio</p>
-            <p *ngFor="let service of orderResp.orderDetails" class="text-xl font-bold">{{ service.quantity }} x {{ service.serviceName }}</p>
+            <p class="text-xl font-bold">{{ getServiceSummaryLabel() }}</p>
           </div>
           <div>
             <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Recolección Programada</p>
@@ -99,8 +99,65 @@
             <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
               <span class="material-symbols-outlined text-primary">event_upcoming</span> Fecha estimada de entrega
             </h3>
-            <p class="text-slate-900 dark:text-white font-bold text-xl">{{formatPickup(orderResp.order.pickupDate, orderResp.order.pickupTime)}}</p>
-            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Alrededor de las {{orderResp.order.pickupTime.substring(0,5)}} hrs</p>
+            <p class="text-slate-900 dark:text-white font-bold text-xl">{{getEstimatedDeliveryText()}}</p>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">
+              Modalidad {{orderResp.order.deliveryModeName || 'Estándar'}}{{orderResp.order.deliveryEtaHours ? ' • ' + orderResp.order.deliveryEtaHours + ' hrs' : ''}}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm">
+        <div class="p-8">
+          <div class="flex items-center justify-between gap-4 mb-6">
+            <div>
+              <h3 class="text-lg font-bold flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">receipt_long</span> Detalle del pedido
+              </h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Resumen actualizado con modalidad, pago y desglose de prendas.</p>
+            </div>
+            <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+              {{orderResp.order.deliveryModeName || 'Servicio estándar'}}
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            <div *ngFor="let detail of orderResp.orderDetails" class="rounded-2xl border border-slate-100 dark:border-slate-800 p-5">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <p class="text-base font-bold text-slate-900 dark:text-white">{{detail.serviceName}}</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400 mt-1" *ngIf="getDetailDescription(detail)">
+                    {{getDetailDescription(detail)}}
+                  </p>
+                </div>
+                <div class="text-right shrink-0">
+                  <p class="text-sm font-bold text-slate-700 dark:text-slate-200">{{detail.quantity}} {{getDetailLabel(detail.uoM)}}</p>
+                  <p class="text-sm text-slate-500 dark:text-slate-400">${{detail.servicePrice}} c/u</p>
+                </div>
+              </div>
+              <div class="mt-4 pt-4 border-t border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-between text-sm">
+                <span class="text-slate-500 dark:text-slate-400">Subtotal</span>
+                <span class="font-bold text-slate-900 dark:text-white">${{detail.subTotal}} MXN</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+            <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+              <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Pago</p>
+              <p class="text-base font-bold text-slate-900 dark:text-white">
+                {{orderResp.order.isPostPayment ? (orderResp.order.postPaymentMethod || 'Pago al recibir') : 'Tarjeta registrada'}}
+              </p>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                {{orderResp.order.isPostPayment ? 'Se cobra al momento de la entrega' : 'Pago aplicado al confirmar el pedido'}}
+              </p>
+            </div>
+
+            <div class="rounded-2xl bg-slate-50 dark:bg-slate-800/50 p-5 border border-slate-100 dark:border-slate-800">
+              <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Programación</p>
+              <p class="text-base font-bold text-slate-900 dark:text-white">{{formatFullDate(orderResp.order.pickupDate)}}</p>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{formatTime(orderResp.order.pickupTime)}}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +165,29 @@
 
     <div class="flex flex-col gap-6">
       <div class="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm">
-        <h3 class="text-xl font-bold mb-6">¿Necesitas ayuda?</h3>
+        <h3 class="text-xl font-bold mb-6">Resumen de cobro</h3>
+        <div class="space-y-4 mb-6">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500 dark:text-slate-400">Servicios</span>
+            <span class="font-bold text-slate-900 dark:text-white">${{getServicesAmount()}} MXN</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500 dark:text-slate-400">Entrega</span>
+            <span class="font-bold text-slate-900 dark:text-white">${{orderResp?.order?.deliveryFee || 0}} MXN</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-slate-500 dark:text-slate-400">Modalidad</span>
+            <span class="font-bold text-slate-900 dark:text-white">{{orderResp?.order?.deliveryModeName || 'Estándar'}}</span>
+          </div>
+          <p *ngIf="(orderResp?.order?.deliveryModeSurcharge || 0) > 0" class="text-xs text-slate-500 dark:text-slate-400">
+            El recargo de modalidad es de ${{orderResp?.order?.deliveryModeSurcharge}} MXN.
+          </p>
+          <div class="pt-4 border-t border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <span class="font-bold text-slate-900 dark:text-white">Total</span>
+            <span class="text-xl font-black text-primary">${{orderResp?.order?.totalAmount}} MXN</span>
+          </div>
+        </div>
+
         <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-relaxed"> Si tienes algún problema con tu pedido o necesitas cambiar la hora de entrega, nuestro equipo de soporte está disponible. </p>
         
         <a class="flex items-center justify-center gap-2 w-full h-14 bg-[#25D366] text-white rounded-xl font-black text-lg shadow-xl shadow-green-500/20 hover:scale-[1.02] transition-transform mb-4" href="https://wa.me/1234567890">
@@ -140,14 +219,14 @@
     <div class="flex flex-col md:flex-row justify-between items-center gap-8">
       <div class="flex items-center gap-3">
         <span class="material-symbols-outlined text-3xl text-primary">local_laundry_service</span>
-        <h2 class="text-xl font-black uppercase tracking-tight">Lavandería Pro</h2>
+        <h2 class="text-xl font-black uppercase tracking-tight">YOTELAVO</h2>
       </div>
       <div class="flex gap-12 text-slate-400 text-sm">
         <a class="hover:text-white transition-colors" href="#">Términos</a>
         <a class="hover:text-white transition-colors" href="#">Privacidad</a>
         <a class="hover:text-white transition-colors" href="#">Soporte</a>
       </div>
-      <p class="text-slate-500 text-sm">© 2024 Lavandería Pro. Todos los derechos reservados.</p>
+      <p class="text-slate-500 text-sm">© 2024 YOTELAVO. Todos los derechos reservados.</p>
     </div>
   </div>
 </footer>

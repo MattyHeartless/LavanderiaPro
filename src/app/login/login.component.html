@@ -69,11 +69,18 @@
     </div>
   </div>
 </div>
+          <label class="flex items-center gap-3 text-sm text-[#0e1b13] dark:text-white/70 select-none cursor-pointer">
+            <input
+              class="h-4 w-4 rounded border-[#d0e7d9] text-primary focus:ring-primary"
+              type="checkbox"
+              name="rememberUser"
+              [(ngModel)]="rememberUser" />
+            <span>Recordarme</span>
+          </label>
           <div class="text-red-500 text-sm mt-2" *ngIf="errorMessage">{{ errorMessage }}</div>
           <!-- Submit Button -->
          <div class="flex pt-4">
   <button 
-    (click)="login()"
     [disabled]="loading"
     class="flex min-w-[84px] w-full items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-primary text-[#0e1b13] text-lg font-bold leading-normal tracking-[0.015em] shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100" 
     type="submit">
@@ -104,7 +111,7 @@
 </main>
 <footer class="bg-white dark:bg-background-dark py-6 border-t border-[#e7f3ec] dark:border-white/10">
   <div class="px-6 md:px-40 flex flex-col md:flex-row justify-between items-center gap-4">
-    <p class="text-xs text-[#4e976a] dark:text-white/40">© 2024 Lavandería Pro. Todos los derechos reservados.</p>
+    <p class="text-xs text-[#4e976a] dark:text-white/40">© 2024 YOTELAVO. Todos los derechos reservados.</p>
     <div class="flex gap-6">
       <a class="text-xs text-[#4e976a] dark:text-white/40 hover:text-primary" href="#">Términos</a>
       <a class="text-xs text-[#4e976a] dark:text-white/40 hover:text-primary" href="#">Privacidad</a>

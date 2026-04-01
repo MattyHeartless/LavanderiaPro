@@ -12,6 +12,7 @@ import { UtilService } from '../../shared/util';
 })
 export class CouponsComponent {
   coupons: UserCoupon[] = [];
+  isMobileMenuOpen = false;
   user_session: any = null;
   loading = false;
   errorMessage = '';
@@ -26,14 +27,22 @@ export class CouponsComponent {
     this.getCoupons();
   }
 
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
   loadUserData() {
-    const data = localStorage.getItem('user_session');
+    const data = this.authService.getStoredUserSession();
 
     if (data) {
       try {
-        this.user_session = JSON.parse(data);
+        this.user_session = data;
       } catch (error) {
-        console.error('Error al parsear datos del localStorage', error);
+        console.error('Error al recuperar la sesión del usuario', error);
       }
     }
   }

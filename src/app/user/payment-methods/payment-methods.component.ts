@@ -4,6 +4,7 @@ import { PaymentMethod, ProfileService } from '../services/profile.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UtilService } from '../../shared/util';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-payment-methods',
   imports: [RouterLink, FormsModule, CommonModule],
@@ -12,6 +13,7 @@ import { UtilService } from '../../shared/util';
 })
 export class PaymentMethodsComponent {
    public user_session: any = null;
+isMobileMenuOpen = false;
 showpaymentForm: boolean = false;
 newPaymentMethod: PaymentMethod = {
   id : 0,
@@ -26,7 +28,7 @@ newPaymentMethod: PaymentMethod = {
 UserPaymentMethods: PaymentMethod[] = [];
 showDeleteCardModal: boolean = false;
 cardToDelete: any = null;
-  constructor(private profileService: ProfileService, public util: UtilService) {
+  constructor(private profileService: ProfileService, private authService: AuthService, public util: UtilService) {
  
    }
   ngOnInit() {
@@ -38,19 +40,26 @@ cardToDelete: any = null;
       this.showpaymentForm = !this.showpaymentForm;
     }
 
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
 
   
   loadUserData() {
-    const data = localStorage.getItem('user_session');
+    const data = this.authService.getStoredUserSession();
     
     if (data) {
       try {
-        // Convertimos el string de nuevo a un objeto JS
-        this.user_session = JSON.parse(data);
+        this.user_session = data;
         console.log('User session cargada:', this.user_session);
        
       } catch (error) {
-        console.error('Error al parsear datos del localStorage', error);
+        console.error('Error al recuperar la sesión del usuario', error);
       }
     }
   }

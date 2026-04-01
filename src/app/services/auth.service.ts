@@ -59,14 +59,45 @@ export interface ChangePasswordRequest {
   providedIn: 'root'
 })
 export class AuthService {
+  private readonly sessionStorageKey = 'user_session';
 
-   currentUserSubject = new BehaviorSubject<LoginResponse | null>(null);
+   currentUserSubject = new BehaviorSubject<LoginResponse | null>(this.getStoredUserSession());
 
   public currentUser$ = this.currentUserSubject.asObservable();
 
   private readonly authUrl = environment.authApiUrl;
 
   constructor(private http: HttpClient) {}
+
+  getStoredUserSession(): LoginResponse | null {
+    const storedSession = localStorage.getItem(this.sessionStorageKey) ?? sessionStorage.getItem(this.sessionStorageKey);
+
+    if (!storedSession) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(storedSession) as LoginResponse;
+    } catch (error) {
+      console.error('Error al parsear datos de sesión', error);
+      this.clearStoredUserSession();
+      return null;
+    }
+  }
+
+  setStoredUserSession(user: LoginResponse, rememberUser: boolean): void {
+    this.clearStoredUserSession();
+
+    const storage = rememberUser ? localStorage : sessionStorage;
+    storage.setItem(this.sessionStorageKey, JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
+  clearStoredUserSession(): void {
+    localStorage.removeItem(this.sessionStorageKey);
+    sessionStorage.removeItem(this.sessionStorageKey);
+    this.currentUserSubject.next(null);
+  }
 
   register(data: RegisterRequest) {
     return this.http.post(`${this.authUrl}/register`, data);
@@ -79,8 +110,8 @@ export class AuthService {
   update(data: UpdateRequest) {
     return this.http.put<LoginResponse>(`${this.authUrl}/update-user/${data.id}`, data).pipe(
       tap((updatedUser) => {
-        this.currentUserSubject.next(updatedUser);
-        localStorage.setItem('user_session', JSON.stringify(updatedUser));
+        const rememberUser = !!localStorage.getItem(this.sessionStorageKey);
+        this.setStoredUserSession(updatedUser, rememberUser);
       })
     );
   }

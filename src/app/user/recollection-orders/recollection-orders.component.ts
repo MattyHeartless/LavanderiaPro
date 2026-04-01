@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { OrderEvidence, OrderResponse, OrdersService } from '../services/orders.service';
 import { CommonModule } from '@angular/common';
 import { UtilService } from '../../shared/util';
+import { AuthService } from '../../services/auth.service';
 
 interface EvidenceStage {
   status: number;
@@ -19,6 +20,7 @@ interface EvidenceStage {
 })
 export class RecollectionOrdersComponent {
   expandedOrderId?: string | null = null;
+  isMobileMenuOpen = false;
   orders:OrderResponse[] = [];
   user_session: any;
   evidenceMap: Record<string, OrderEvidence[]> = {};
@@ -30,11 +32,19 @@ export class RecollectionOrdersComponent {
     { status: 5, pendingLabel: 'En entrega', completedLabel: 'Entregado', icon: 'near_me' }
   ];
 
-  constructor(private ordersService: OrdersService, public util: UtilService) {}
+  constructor(private ordersService: OrdersService, private authService: AuthService, public util: UtilService) {}
 
   ngOnInit() {
     this.loadUserData();
     this.getRecollectionOrders();
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
   }
 
     getRecollectionOrders() {
@@ -61,16 +71,15 @@ export class RecollectionOrdersComponent {
 
      
   loadUserData() {
-    const data = localStorage.getItem('user_session');
+    const data = this.authService.getStoredUserSession();
     
     if (data) {
       try {
-        // Convertimos el string de nuevo a un objeto JS
-        this.user_session = JSON.parse(data);
+        this.user_session = data;
         console.log('User session cargada:', this.user_session);
        
       } catch (error) {
-        console.error('Error al parsear datos del localStorage', error);
+        console.error('Error al recuperar la sesión del usuario', error);
       }
     }
   }
@@ -161,9 +170,63 @@ export class RecollectionOrdersComponent {
   }
 
   formatCreateAt(dateString: string): string {
-    const date = new Date(dateString);
+    const date = this.parseDateString(dateString);
     const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' };
     return date.toLocaleDateString('en-US', options);
+  }
+
+  formatPickupSchedule(pickupDate?: string | null, pickupTime?: string | null): string {
+    if (!pickupDate && !pickupTime) {
+      return 'Sin horario de recoleccion';
+    }
+
+    const formattedDate = pickupDate ? this.formatCreateAt(pickupDate) : '';
+    const formattedTime = this.formatPickupTime(pickupTime);
+
+    if (formattedDate && formattedTime) {
+      return `${formattedDate} • ${formattedTime}`;
+    }
+
+    return formattedDate || formattedTime || 'Sin horario de recoleccion';
+  }
+
+  private formatPickupTime(timeString?: string | null): string {
+    if (!timeString) {
+      return '';
+    }
+
+    const normalizedTime = timeString.length === 5 ? `${timeString}:00` : timeString;
+    const date = new Date(`1970-01-01T${normalizedTime}`);
+
+    if (Number.isNaN(date.getTime())) {
+      return timeString;
+    }
+
+    return date.toLocaleTimeString('es-MX', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+
+  private parseDateString(dateString: string): Date {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      const [year, month, day] = dateString.split('-').map(Number);
+      return new Date(year, month - 1, day);
+    }
+
+    return new Date(dateString);
+  }
+
+  getOrderDetailLabel(detail: OrderResponse['orderDetails'][number]): string {
+    const pricingOptionName = detail.pricingOptionName?.trim();
+
+    if (pricingOptionName) {
+      return `${detail.quantity} ${pricingOptionName.replace(/bulto/gi, 'Carga')} x ${detail.serviceName}`;
+    }
+
+    const unitLabel = detail.uoM === 'BULTO' ? 'Carga' : detail.uoM;
+    return `${detail.quantity} ${unitLabel} x ${detail.serviceName}`;
   }
 
   loadOrderEvidences(orderId: string) {

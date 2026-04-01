@@ -12,6 +12,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
+    readonly minPasswordLength = 10;
+    showPassword = false;
 
      model: RegisterRequest = {
         email: '',
@@ -22,12 +24,52 @@ export class RegisterComponent {
     loading = false;
     errorMessage = '';
 
-   constructor(
+  constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
+  get passwordChecks() {
+    const password = this.model.password ?? '';
+
+    return [
+      {
+        label: `Mínimo ${this.minPasswordLength} caracteres`,
+        passed: password.length >= this.minPasswordLength
+      },
+      {
+        label: 'Al menos una mayúscula',
+        passed: /[A-Z]/.test(password)
+      },
+      {
+        label: 'Al menos una minúscula',
+        passed: /[a-z]/.test(password)
+      },
+      {
+        label: 'Al menos un número',
+        passed: /\d/.test(password)
+      },
+      {
+        label: 'Al menos un caracter especial',
+        passed: /[^A-Za-z0-9]/.test(password)
+      }
+    ];
+  }
+
+  get isPasswordValid() {
+    return this.passwordChecks.every((rule) => rule.passed);
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
    register() {
+    if (!this.isPasswordValid) {
+      this.errorMessage = 'La contraseña no cumple con los requisitos mínimos.';
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = '';
 

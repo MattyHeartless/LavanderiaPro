@@ -1,31 +1,30 @@
 export class CalendarComponent {
   currentDate = new Date(); // Fecha actual de referencia
-  weekDays: Date[] = [];
+  monthDays: Date[] = [];
   selectedDate: Date = new Date();
 today: Date = new Date();
 selectedDayLabel: string = 'Mañana, 24 Oct';
   constructor() {
-    this.generateWeek();
+    this.generateMonth();
   }
 
-  generateWeek() {
-    this.weekDays = [];
-    // Buscamos el domingo de la semana actual
-    const startOfWeek = new Date(this.currentDate);
-    const day = startOfWeek.getDay() ; // 0 es Domingo
-    startOfWeek.setDate(this.currentDate.getDate() - day);
+  generateMonth() {
+    this.monthDays = [];
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const startDate = new Date(firstDayOfMonth);
+    startDate.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
 
-    // Llenamos el arreglo con los 7 días
-    for (let i = 0; i < 7; i++) {
-      this.weekDays.push(new Date(startOfWeek));
-      startOfWeek.setDate(startOfWeek.getDate() + 1);
+    for (let i = 0; i < 28; i++) {
+      this.monthDays.push(new Date(startDate));
+      startDate.setDate(startDate.getDate() + 1);
     }
   }
 
-  changeWeek(offset: number) {
-    // offset será 7 para siguiente semana, -7 para anterior
-    this.currentDate.setDate(this.currentDate.getDate() + offset);
-    this.generateWeek();
+  changeMonth(offset: number) {
+    this.currentDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + offset, 1);
+    this.generateMonth();
   }
 
  isPastDay(date: Date): boolean {

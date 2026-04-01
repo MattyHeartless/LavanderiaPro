@@ -38,6 +38,10 @@ export interface Order {
     pickupDate: string;
     pickupTime: string;
     deliveryModeId?: number;
+    deliveryModeCode?: string;
+    deliveryModeName?: string;
+    deliveryEtaHours?: number;
+    deliveryModeSurcharge?: number;
     isPostPayment: boolean;
     postPaymentMethod: string;
     status: number;

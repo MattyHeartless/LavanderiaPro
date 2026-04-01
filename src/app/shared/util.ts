@@ -10,8 +10,7 @@ export class UtilService {
   private authService = inject(AuthService);
 
   logout(): void {
-    localStorage.removeItem('user_session');
-    this.authService.currentUserSubject.next(null);
+    this.authService.clearStoredUserSession();
     this.router.navigate(['/']);
   }
 }

@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { UtilService } from '../../shared/util';
 import { Addresses, ProfileService } from '../services/profile.service';
+import { AuthService } from '../../services/auth.service';
 
 interface NominatimResult {
   lat: string;
@@ -32,6 +33,7 @@ type LeafletModule = typeof import('leaflet');
 })
 export class AddressComponent implements OnDestroy {
   newAddressData: Addresses = this.createEmptyAddress();
+  isMobileMenuOpen = false;
   showaddressform = false;
   user_session: any = null;
   addresses: Addresses[] = [];
@@ -50,6 +52,7 @@ export class AddressComponent implements OnDestroy {
 
   constructor(
     private profileService: ProfileService,
+    private authService: AuthService,
     private http: HttpClient,
     public util: UtilService
   ) {}
@@ -72,6 +75,14 @@ export class AddressComponent implements OnDestroy {
     this.openAddressForm();
   }
 
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
   loadAddresses(): void {
     const userId = this.user_session.id;
     console.log('Loading addresses for userId:', userId);
@@ -87,14 +98,14 @@ export class AddressComponent implements OnDestroy {
   }
 
   loadUserData() {
-    const data = localStorage.getItem('user_session');
+    const data = this.authService.getStoredUserSession();
 
     if (data) {
       try {
-        this.user_session = JSON.parse(data);
+        this.user_session = data;
         console.log('User session cargada:', this.user_session);
       } catch (error) {
-        console.error('Error al parsear datos del localStorage', error);
+        console.error('Error al recuperar la sesión del usuario', error);
       }
     }
   }

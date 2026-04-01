@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 })
 export class LoginComponent {
       showPassword = false;
+      rememberUser = false;
    
 model: LoginRequest = {
         email: '',
@@ -32,8 +33,7 @@ model: LoginRequest = {
 
       this.authService.login(this.model).subscribe({
         next: (response: LoginResponse) => {
-          this.authService.currentUserSubject.next(response);
-          localStorage.setItem('user_session', JSON.stringify(response));
+          this.authService.setStoredUserSession(response, this.rememberUser);
           this.router.navigate(['/profile']);
         },
         error: (error) => {

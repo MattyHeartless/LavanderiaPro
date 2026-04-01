@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { CalendarComponent } from '../utils/calendar';
 import { CreateOrderRequest, DeliveryMode, Order, OrdersService } from '../services/orders.service';
 import { forkJoin } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
+import { UtilService } from '../../shared/util';
 
 @Component({
   selector: 'app-new-recollection',
@@ -16,6 +18,8 @@ import { forkJoin } from 'rxjs';
 export class NewRecollectionComponent  {
 readonly baseDeliveryFee = 25;
 isConfirming = false;
+isConfirmModalOpen = false;
+isMobileMenuOpen = false;
 public user_session: any = null;
 UserAddresses : Addresses[] = [];
 UserPaymentMethods: PaymentMethod[] = [];
@@ -26,7 +30,7 @@ deliveryModes: DeliveryMode[] = [];
 selectedDeliveryMode: DeliveryMode | null = null;
 calendar: CalendarComponent = new CalendarComponent();
 selectedTime: string | null = null;
-availableHours: string[] = [
+readonly availableHours: string[] = [
   '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', 
   '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', 
   '20:00', '21:00'
@@ -42,6 +46,8 @@ selectedPayment = {id: 0,label: 'No seleccionado', icon: 'payments', details: ''
   private profileService: ProfileService,
   private catalogService: CatalogsService,
   private ordersService: OrdersService,
+  private authService: AuthService,
+  public util: UtilService,
    private router: Router
     ) {}
 
@@ -57,18 +63,25 @@ testRedirect(){
   this.router.navigate(['/recollection-received/'], { queryParams: { id: '2' } });
 }
 
+toggleMobileMenu() {
+  this.isMobileMenuOpen = !this.isMobileMenuOpen;
+}
+
+closeMobileMenu() {
+  this.isMobileMenuOpen = false;
+}
+
 
   loadUserData() {
-    const data = localStorage.getItem('user_session');
+    const data = this.authService.getStoredUserSession();
     
     if (data) {
       try {
-        // Convertimos el string de nuevo a un objeto JS
-        this.user_session = JSON.parse(data);
+        this.user_session = data;
         console.log('User session cargada:', this.user_session);
        
       } catch (error) {
-        console.error('Error al parsear datos del localStorage', error);
+        console.error('Error al recuperar la sesión del usuario', error);
       }
     }
   }
@@ -221,6 +234,10 @@ testRedirect(){
     return this.getSelectedPricingOption(service)?.uoM ?? '';
   }
 
+  hasMultiplePricingOptions(service: Service): boolean {
+    return service.pricingOptions.length > 1;
+  }
+
   hasBulkOptions(service: Service): boolean {
     return service.pricingOptions.some(option => this.isBulkOption(option));
   }
@@ -267,6 +284,10 @@ testRedirect(){
     }
 
     return '';
+  }
+
+  getLoadDisplayName(optionName: string): string {
+    return optionName.replace(/bulto/gi, 'Carga');
   }
 
   isBulkOption(option: ServicePricingOption | undefined): boolean {
@@ -444,9 +465,44 @@ getDeliveryModeSurcharge(): number {
   return this.selectedDeliveryMode?.surchargeAmount ?? 0;
 }
 
-getServicesSubtotal(): number {
+private roundCurrency(value: number): number {
+  return Number(value.toFixed(2));
+}
+
+get availablePickupHours(): string[] {
+  if (!this.isSelectedDateToday()) {
+    return this.availableHours;
+  }
+
+  const now = new Date();
+  const minimumPickupTime = new Date(now.getTime() + 60 * 60 * 1000);
+  minimumPickupTime.setMinutes(minimumPickupTime.getMinutes() > 0 ? 60 : 0, 0, 0);
+
+  return this.availableHours.filter((hour) => {
+    const [hours, minutes] = hour.split(':').map(Number);
+    const slotDate = new Date(
+      this.calendar.selectedDate.getFullYear(),
+      this.calendar.selectedDate.getMonth(),
+      this.calendar.selectedDate.getDate(),
+      hours,
+      minutes,
+      0,
+      0
+    );
+
+    return slotDate >= minimumPickupTime;
+  });
+}
+
+  getServicesSubtotal(): number {
   return this.cart.reduce((total, item) => total + (item.servicePrice * item.quantity), 0);
 }
+
+  selectPickupDay(day: Date) {
+    this.calendar.selectDay(day);
+    this.syncSelectedPickupDate();
+    this.ensureSelectedTimeIsAvailable();
+  }
 
   selectTime(hour: string) {
   // 1. Actualizamos el estado visual del botón
@@ -468,6 +524,34 @@ getServicesSubtotal(): number {
     timeSlot: formattedTime
   };
 }
+
+  private isSelectedDateToday(): boolean {
+    const today = new Date();
+
+    return this.calendar.selectedDate.getFullYear() === today.getFullYear() &&
+      this.calendar.selectedDate.getMonth() === today.getMonth() &&
+      this.calendar.selectedDate.getDate() === today.getDate();
+  }
+
+  private syncSelectedPickupDate() {
+    this.selectedPickup = {
+      ...this.selectedPickup,
+      date: this.calendar.selectedDate.toISOString().split('T')[0],
+      datelabel: this.calendar.selectedDayLabel
+    };
+  }
+
+  private ensureSelectedTimeIsAvailable() {
+    if (!this.selectedTime || this.availablePickupHours.includes(this.selectedTime)) {
+      return;
+    }
+
+    this.selectedTime = null;
+    this.selectedPickup = {
+      ...this.selectedPickup,
+      timeSlot: ''
+    };
+  }
 
     onPaymentChange(type: 'card' | 'cash', data?: any, id?: number | string) {
       if (type === 'card') {
@@ -504,6 +588,22 @@ getServicesSubtotal(): number {
       );
     }
 
+    openConfirmModal() {
+      if (!this.isOrderValid || this.isConfirming) {
+        return;
+      }
+
+      this.isConfirmModalOpen = true;
+    }
+
+    closeConfirmModal() {
+      if (this.isConfirming) {
+        return;
+      }
+
+      this.isConfirmModalOpen = false;
+    }
+
     confirmOrder() {
       const selectedAddressData = this.UserAddresses.find(addr => addr.title === this.selectedAddress.title);
       
@@ -514,6 +614,10 @@ getServicesSubtotal(): number {
       if (this.cart.length === 0) {
         return;
       }
+      const deliveryFee = this.roundCurrency(this.deliveryFee);
+      const deliveryModeSurcharge = this.roundCurrency(this.getDeliveryModeSurcharge());
+      const totalAmount = this.roundCurrency(this.getServicesSubtotal() + deliveryFee);
+      this.isConfirmModalOpen = false;
       this.isConfirming = true;
       console.log('Selected address data for order:', selectedAddressData);
   const order: Order = {
@@ -535,11 +639,15 @@ getServicesSubtotal(): number {
     pickupDate: this.selectedPickup.date,
     pickupTime: this.selectedPickup.timeSlot.split(' ')[0] + ':00',
     deliveryModeId: this.selectedDeliveryMode?.id,
+    deliveryModeCode: this.selectedDeliveryMode?.code,
+    deliveryModeName: this.selectedDeliveryMode?.name,
+    deliveryEtaHours: this.selectedDeliveryMode?.etaHours,
+    deliveryModeSurcharge,
     isPostPayment: this.selectedPayment.label === 'Pago a domicilio',
     postPaymentMethod: this.selectedPayment.label === 'Pago a domicilio' ? 'Efectivo o Terminal' : '',
     status: this.selectedPayment.id !== 0 ? 2 : 1,
-    totalAmount: this.totalEstimated,
-    deliveryFee: this.deliveryFee,
+    totalAmount,
+    deliveryFee,
     courierGuid: null,
       courierName: '',
       courierPhone: '',
@@ -556,6 +664,10 @@ getServicesSubtotal(): number {
       pickupDate: order.pickupDate,
       pickupTime: order.pickupTime,
       deliveryModeId: order.deliveryModeId,
+      deliveryModeCode: order.deliveryModeCode,
+      deliveryModeName: order.deliveryModeName,
+      deliveryEtaHours: order.deliveryEtaHours,
+      deliveryModeSurcharge: order.deliveryModeSurcharge,
       isPostPayment: order.isPostPayment,
       postPaymentMethod: order.postPaymentMethod,
       status: order.status,
