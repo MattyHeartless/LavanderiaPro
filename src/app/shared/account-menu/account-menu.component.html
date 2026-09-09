@@ -1,0 +1,17 @@
+<button class="menu-trigger" type="button" aria-label="Abrir menú" [attr.aria-expanded]="isOpen" (click)="toggle()"><span class="material-symbols-outlined">menu</span></button>
+@if (isOpen) {
+  <div class="menu-backdrop" (click)="close()">
+    <aside class="menu-drawer" role="dialog" aria-modal="true" aria-label="Menú de cuenta" (click)="$event.stopPropagation()">
+      <div class="menu-drawer__header"><div class="flex items-center gap-3"><img class="h-9 w-9 object-contain" src="/images/lavanderiapro-logo-mark.png" alt="" aria-hidden="true"><div><p>LavanderíaPro</p><h2>Mi cuenta</h2></div></div><button class="menu-close" type="button" aria-label="Cerrar menú" (click)="close()"><span class="material-symbols-outlined">close</span></button></div>
+      <nav class="menu-drawer__nav">
+        <a routerLink="/profile" routerLinkActive="is-active" (click)="close()"><span class="material-symbols-outlined">person</span>Perfil</a>
+        <a routerLink="/address" routerLinkActive="is-active" (click)="close()"><span class="material-symbols-outlined">location_on</span>Direcciones</a>
+        <a routerLink="/payment-methods" routerLinkActive="is-active" (click)="close()"><span class="material-symbols-outlined">payments</span>Métodos de pago</a>
+        <a routerLink="/coupons" routerLinkActive="is-active" (click)="close()"><span class="material-symbols-outlined">local_offer</span>Cupones</a>
+        <a routerLink="/recollection-orders" routerLinkActive="is-active" (click)="close()"><span class="material-symbols-outlined">history</span>Mis pedidos</a>
+        <a class="menu-drawer__primary" routerLink="/new-recollection" (click)="close()"><span class="material-symbols-outlined">add</span>Nueva recolección</a>
+      </nav>
+      <div class="menu-drawer__footer"><button type="button" (click)="util.logout(); close()"><span class="material-symbols-outlined">logout</span>Cerrar sesión</button></div>
+    </aside>
+  </div>
+}

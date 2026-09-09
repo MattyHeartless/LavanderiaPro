@@ -1,9 +1,10 @@
 export const environment = {
   production: false,
-  authApiUrl: 'http://localhost:5116/api/Auth',
-  profileApiUrl: 'http://localhost:5136/api/Profile',
-  catalogsApiUrl: 'http://localhost:5009/api/Catalogs',
-  ordersApiUrl: 'http://localhost:5252/api/Orders'
+  authApiUrl: 'http://localhost:5003/api/Auth',
+  profileApiUrl: 'http://localhost:5002/api/Profile',
+  catalogsApiUrl: 'http://localhost:5001/api/Catalogs',
+  ordersApiUrl: 'http://localhost:5252/api/Orders',
+  googleMapsApiKey: 'AIzaSyAHnb3g6DeQjv4kPMCEEypFl_CN4ETrSvw'
 };
 
 // export const environment = {

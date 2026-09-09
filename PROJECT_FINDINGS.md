@@ -141,22 +141,16 @@ Corrección recomendada:
 
 ## Mejora Implementada En Esta Iteración
 
-Se agregó soporte visual para direcciones con mapa en la pantalla de direcciones:
+La pantalla de direcciones usa Google Places Autocomplete sin mapa:
 
-- Vista previa del mapa con OpenStreetMap + Leaflet
-- Búsqueda de la dirección a partir de los campos del formulario
-- Marcador ajustable manualmente
-- Persistencia de `latitude` y `longitude` en el payload de dirección
-- Visualización de coordenadas en direcciones guardadas
+- Sugerencias de dirección mientras el cliente escribe, limitadas a México.
+- Selección de una dirección para obtener sus componentes, latitud y longitud.
+- Persistencia de `latitude` y `longitude` en el payload de dirección.
+- Visualización de coordenadas en direcciones guardadas.
 
 ## Recomendaciones De La Parte De Mapa
 
-La implementación actual usa geocodificación con Nominatim desde frontend. Esto sirve para avanzar, pero conviene endurecerlo después:
-
-1. Mover la geocodificación al backend o a un servicio propio si el volumen crece.
-2. Aplicar rate limiting y caching.
-3. Validar qué proveedor de mapas/geocodificación usarás en producción.
-4. Asegurar que el backend ya acepte y persista `latitude` y `longitude`.
+La implementación actual usa Places API (New) desde el navegador. La llave está restringida para este uso y el backend ya acepta y persiste `latitude` y `longitude`.
 
 ## Orden Sugerido De Corrección
 

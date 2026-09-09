@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Addresses, PaymentMethod, ProfileService } from '../services/profile.service';
 import { CatalogsService, PickupSchedule, Service, ServiceItem, ServicePricingOption, UserAddress } from '../services/catalogs.service';
@@ -8,17 +8,20 @@ import { CreateOrderRequest, DeliveryMode, Order, OrdersService } from '../servi
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { UtilService } from '../../shared/util';
+import { NotificationService } from '../../shared/notification.service';
+import { AccountMenuComponent } from '../../shared/account-menu/account-menu.component';
 
 @Component({
   selector: 'app-new-recollection',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, AccountMenuComponent],
   templateUrl: './new-recollection.component.html',
   styleUrl: './new-recollection.component.css'
 })
-export class NewRecollectionComponent  {
+export class NewRecollectionComponent implements OnDestroy {
 readonly baseDeliveryFee = 25;
 isConfirming = false;
 isConfirmModalOpen = false;
+isConfirmModalClosing = false;
 isMobileMenuOpen = false;
 public user_session: any = null;
 UserAddresses : Addresses[] = [];
@@ -39,6 +42,7 @@ cart: ServiceItem[] = [];
 selectedPickup: PickupSchedule = { date: '', datelabel: '', timeSlot: '' };
 selectedAddress: UserAddress = {title: '',fullAddress: ''};
 selectedPayment = {id: 0,label: 'No seleccionado', icon: 'payments', details: ''};
+private confirmModalCloseTimer: ReturnType<typeof setTimeout> | null = null;
  
   
 
@@ -48,7 +52,8 @@ selectedPayment = {id: 0,label: 'No seleccionado', icon: 'payments', details: ''
   private ordersService: OrdersService,
   private authService: AuthService,
   public util: UtilService,
-   private router: Router
+   private router: Router,
+   private notifications: NotificationService
     ) {}
 
     ngOnInit() {
@@ -58,6 +63,12 @@ selectedPayment = {id: 0,label: 'No seleccionado', icon: 'payments', details: ''
     this.getServices();
     this.getDeliveryModes();
     this.calendar.setDayLabel();  }
+
+    ngOnDestroy(): void {
+      if (this.confirmModalCloseTimer) {
+        clearTimeout(this.confirmModalCloseTimer);
+      }
+    }
 
 testRedirect(){
   this.router.navigate(['/recollection-received/'], { queryParams: { id: '2' } });
@@ -103,7 +114,7 @@ closeMobileMenu() {
     console.log('Loading addresses for userId:', userId);
     this.profileService.getAddress(userId).subscribe({
       next: (data:any) => {
-        this.UserAddresses = data.addresses;
+        this.UserAddresses = data.addresses ?? [];
         console.log('Addresses loaded:', this.UserAddresses);
       },
       error: err => {
@@ -593,6 +604,11 @@ get availablePickupHours(): string[] {
         return;
       }
 
+      if (this.confirmModalCloseTimer) {
+        clearTimeout(this.confirmModalCloseTimer);
+        this.confirmModalCloseTimer = null;
+      }
+      this.isConfirmModalClosing = false;
       this.isConfirmModalOpen = true;
     }
 
@@ -601,7 +617,20 @@ get availablePickupHours(): string[] {
         return;
       }
 
-      this.isConfirmModalOpen = false;
+      this.dismissConfirmModal();
+    }
+
+    private dismissConfirmModal(): void {
+      if (!this.isConfirmModalOpen || this.isConfirmModalClosing) {
+        return;
+      }
+
+      this.isConfirmModalClosing = true;
+      this.confirmModalCloseTimer = setTimeout(() => {
+        this.isConfirmModalOpen = false;
+        this.isConfirmModalClosing = false;
+        this.confirmModalCloseTimer = null;
+      }, 220);
     }
 
     confirmOrder() {
@@ -609,15 +638,17 @@ get availablePickupHours(): string[] {
       
       if (!selectedAddressData) {
         console.error('Selected address not found');
+        this.notifications.warning('Selecciona una dirección antes de confirmar tu recolección.');
         return;
       }
       if (this.cart.length === 0) {
+        this.notifications.warning('Agrega al menos un servicio antes de confirmar.');
         return;
       }
       const deliveryFee = this.roundCurrency(this.deliveryFee);
       const deliveryModeSurcharge = this.roundCurrency(this.getDeliveryModeSurcharge());
       const totalAmount = this.roundCurrency(this.getServicesSubtotal() + deliveryFee);
-      this.isConfirmModalOpen = false;
+      this.dismissConfirmModal();
       this.isConfirming = true;
       console.log('Selected address data for order:', selectedAddressData);
   const order: Order = {
@@ -691,11 +722,13 @@ get availablePickupHours(): string[] {
       this.ordersService.add(orderPayload).subscribe({
           next: (response) => {
             console.log('Order created successfully:', response);
+            this.notifications.success('Recolección programada correctamente.');
             this.router.navigate(['/recollection-received/'], { queryParams: { id: response.orderId } });
           },
           error: (err) => {
             this.isConfirming = false;
             console.error('Error creating order:', err);
+            this.notifications.error(err, 'No fue posible programar la recolección.');
           }
         });
     }else{
@@ -704,11 +737,13 @@ get availablePickupHours(): string[] {
         this.ordersService.add(orderPayload).subscribe({
           next: (response) => {
             console.log('Order created successfully after payment:', response);
+            this.notifications.success('Pago confirmado y recolección programada.');
             this.router.navigate(['/recollection-received/'], { queryParams: { id: response.orderId } });
           },
           error: (err) => {
             this.isConfirming = false;
             console.error('Error creating order after payment:', err);
+            this.notifications.error(err, 'No fue posible confirmar el pago y crear la recolección.');
           }
         });
       }, 2000);
@@ -726,7 +761,7 @@ get availablePickupHours(): string[] {
 
       if (!allActive) {
         this.isConfirming = false;
-        alert('Una o más opciones de precio ya no están disponibles. Revisa tu carrito y vuelve a intentarlo.');
+        this.notifications.warning('Una o más opciones de precio ya no están disponibles. Revisa tu carrito y vuelve a intentarlo.');
         return;
       }
 
@@ -735,7 +770,7 @@ get availablePickupHours(): string[] {
     error: (err) => {
       this.isConfirming = false;
       console.error('Error validating pricing options:', err);
-      alert('No fue posible validar las opciones de precio seleccionadas. Intenta nuevamente.');
+      this.notifications.error(err, 'No fue posible validar las opciones de precio seleccionadas. Intenta nuevamente.');
     }
   });
     }

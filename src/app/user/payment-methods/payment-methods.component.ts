@@ -5,9 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UtilService } from '../../shared/util';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../shared/notification.service';
+import { AccountMenuComponent } from '../../shared/account-menu/account-menu.component';
 @Component({
   selector: 'app-payment-methods',
-  imports: [RouterLink, FormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, CommonModule, AccountMenuComponent],
   templateUrl: './payment-methods.component.html',
   styleUrl: './payment-methods.component.css'
 })
@@ -28,7 +30,7 @@ newPaymentMethod: PaymentMethod = {
 UserPaymentMethods: PaymentMethod[] = [];
 showDeleteCardModal: boolean = false;
 cardToDelete: any = null;
-  constructor(private profileService: ProfileService, private authService: AuthService, public util: UtilService) {
+  constructor(private profileService: ProfileService, private authService: AuthService, public util: UtilService, private notifications: NotificationService) {
  
    }
   ngOnInit() {
@@ -76,9 +78,11 @@ cardToDelete: any = null;
         console.log('Payment method saved successfully:', response);
         this.resetForm();
         this.getPaymentMethods();
+        this.notifications.success('Método de pago guardado correctamente.');
       },
       error: (err:any) => {
         console.error('Error saving payment method:', err);
+        this.notifications.error(err, 'No fue posible guardar el método de pago.');
       }
     });
 
@@ -154,9 +158,11 @@ confirmDeleteCard() {
         this.getPaymentMethods(); 
         this.showDeleteCardModal = false;
         this.cardToDelete = null;
+        this.notifications.success('Método de pago eliminado correctamente.');
       },
       error: (err) => {
         console.error('Error al eliminar:', err);
+        this.notifications.error(err, 'No fue posible eliminar el método de pago.');
       }
     });
   }

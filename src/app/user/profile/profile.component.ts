@@ -3,10 +3,12 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService, ChangePasswordRequest, UpdateRequest } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { UtilService } from '../../shared/util';
+import { NotificationService } from '../../shared/notification.service';
+import { AccountMenuComponent } from '../../shared/account-menu/account-menu.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, AccountMenuComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -35,7 +37,8 @@ export class ProfileComponent {
   constructor(
      private authService: AuthService,
     private router: Router,
-    public util: UtilService
+    public util: UtilService,
+    private notifications: NotificationService
   ) {}
 
   
@@ -127,6 +130,7 @@ export class ProfileComponent {
   updateUserData() {
     if (this.isPasswordChangeRequested && !this.canSubmitPasswordChange) {
       this.passwordErrorMessage = 'Para cambiar la contraseña, captura la actual y una nueva contraseña válida.';
+      this.notifications.warning(this.passwordErrorMessage);
       return;
     }
 
@@ -146,17 +150,23 @@ export class ProfileComponent {
             next: (response) => {
               this.isSaving = false;
               console.log("Contraseña actualizada:", response);
+              this.notifications.success('Tus datos y contraseña se actualizaron correctamente.');
             },
             error: (error) => {
               this.isSaving = false;
               console.error("Error al actualizar contraseña:", error);
+              this.notifications.error(error, 'Tus datos se guardaron, pero no fue posible cambiar la contraseña.');
             }
           });
+       }
+       else {
+         this.notifications.success('Tus datos se actualizaron correctamente.');
        }
       },
       error: (error) => {
         this.isSaving = false;
         console.error('Error al actualizar usuario:', error);
+        this.notifications.error(error, 'No fue posible actualizar tus datos.');
       }
     });
   }

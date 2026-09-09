@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, RegisterRequest } from '../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../shared/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +27,8 @@ export class RegisterComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private notifications: NotificationService
   ) {}
 
   get passwordChecks() {
@@ -75,10 +77,12 @@ export class RegisterComponent {
 
     this.authService.register(this.model).subscribe({
       next: () => {
+        this.notifications.success('Cuenta creada. Ya puedes iniciar sesión.');
         this.router.navigate(['/login']);
       },
       error: err => {
         this.errorMessage = err?.error?.message ?? 'Error al registrar usuario';
+        this.notifications.error(err, 'No fue posible crear tu cuenta.');
         this.loading = false;
       }
     });
