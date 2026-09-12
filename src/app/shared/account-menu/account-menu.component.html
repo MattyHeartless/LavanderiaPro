@@ -2,7 +2,7 @@
 @if (isOpen) {
   <div class="menu-backdrop" (click)="close()">
     <aside class="menu-drawer" role="dialog" aria-modal="true" aria-label="Menú de cuenta" (click)="$event.stopPropagation()">
-      <div class="menu-drawer__header"><div class="flex items-center gap-3"><img class="h-9 w-9 object-contain" src="/images/lavanderiapro-logo-mark.png" alt="" aria-hidden="true"><div><p>LavanderíaPro</p><h2>Mi cuenta</h2></div></div><button class="menu-close" type="button" aria-label="Cerrar menú" (click)="close()"><span class="material-symbols-outlined">close</span></button></div>
+      <div class="menu-drawer__header"><div class="flex items-center gap-3"><img class="h-9 w-9 object-contain" src="/images/lavanderiapro-logo-mark.png" alt="" aria-hidden="true"><div><p>Lavanderiaatucasa</p><h2>Mi cuenta</h2></div></div><button class="menu-close" type="button" aria-label="Cerrar menú" (click)="close()"><span class="material-symbols-outlined">close</span></button></div>
       <nav class="menu-drawer__nav">
         <a routerLink="/profile" routerLinkActive="is-active" (click)="close()"><span class="material-symbols-outlined">person</span>Perfil</a>
         <a routerLink="/address" routerLinkActive="is-active" (click)="close()"><span class="material-symbols-outlined">location_on</span>Direcciones</a>

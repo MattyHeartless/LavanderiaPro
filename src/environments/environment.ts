@@ -4,6 +4,7 @@ export const environment = {
   profileApiUrl: 'http://localhost:5002/api/Profile',
   catalogsApiUrl: 'http://localhost:5001/api/Catalogs',
   ordersApiUrl: 'http://localhost:5252/api/Orders',
+  googleClientId: '451440019470-ha4gmu06h99ee9aqe6ktaek6spumlgi9.apps.googleusercontent.com',
   googleMapsApiKey: 'AIzaSyAHnb3g6DeQjv4kPMCEEypFl_CN4ETrSvw'
 };
 

@@ -15,6 +15,10 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface GoogleLoginRequest {
+  credential: string;
+}
+
 export interface LoginResponse {
   id?: string;
   userId: string;
@@ -105,6 +109,10 @@ export class AuthService {
 
   login(data: LoginRequest) {
     return this.http.post<LoginResponse>(`${this.authUrl}/login`, data);
+  }
+
+  loginWithGoogle(data: GoogleLoginRequest) {
+    return this.http.post<LoginResponse>(`${this.authUrl}/google`, data);
   }
 
   update(data: UpdateRequest) {
